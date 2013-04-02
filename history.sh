@@ -31,7 +31,7 @@ if [ $1 ]
 then
     grep $1 ~/.bash_all_history
 else
-    less ~/.bash_all_history
+    less +G ~/.bash_all_history
 fi
 }
 
