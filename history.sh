@@ -26,7 +26,7 @@ export HISTTIMEFORMAT='%F %T '
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo $USER $PWD "$(history 1)" >> ~/.bash_all_history'
 
 #grep history
-function hg {
+function gh {
 if [ $1 ]
 then
     grep $1 ~/.bash_all_history
