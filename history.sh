@@ -23,7 +23,7 @@
 
 #set up history logging of commands
 export HISTTIMEFORMAT='%F %T '
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'printf "%q %q %b\n" "$USER" "$(readlink -e $PWD)" "$(history 1 | cut -d " " -f4-)" >> ~/.bash_all_history'
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'printf "%q %q %b\n" "$USER" "$(readlink -e -- "$PWD")" "$(history 1 | cut -d " " -f4-)" >> ~/.bash_all_history'
 
 #grep history
 function gh {
@@ -39,9 +39,9 @@ fi
 function dh {
 if [ "$1" ]
 then
-    grep "$(readlink -e $PWD)" ~/.bash_all_history | grep "$1"
+    grep "$(readlink -e -- "$PWD")" ~/.bash_all_history | grep "$1"
 else
-    grep "$(readlink -e $PWD)" ~/.bash_all_history
+    grep "$(readlink -e -- "$PWD")" ~/.bash_all_history
 fi
 }
 
@@ -49,9 +49,9 @@ fi
 function ldh {
 if [ "$1" ]
 then
-    grep "$(readlink -e $PWD) " ~/.bash_all_history | grep "$1"
+    grep "$(readlink -e -- "$PWD") " ~/.bash_all_history | grep "$1"
 else
-    grep "$(readlink -e $PWD) " ~/.bash_all_history
+    grep "$(readlink -e -- "$PWD") " ~/.bash_all_history
 fi
 }
 
