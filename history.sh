@@ -49,9 +49,9 @@ fi
 function ldh {
 if [ "$1" ]
 then
-    grep "$(readlink -e $PWD)" ~/.bash_all_history | grep "$1"
+    grep "$(readlink -e $PWD) " ~/.bash_all_history | grep "$1"
 else
-    grep "$(readlink -e $PWD)" ~/.bash_all_history
+    grep "$(readlink -e $PWD) " ~/.bash_all_history
 fi
 }
 
