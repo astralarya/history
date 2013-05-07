@@ -27,9 +27,9 @@ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'echo $USER $(readlink -e 
 
 #grep history
 function gh {
-if [ $1 ]
+if [ "$1" ]
 then
-    grep $1 ~/.bash_all_history
+    grep "$1" ~/.bash_all_history
 else
     less +G ~/.bash_all_history
 fi
@@ -37,9 +37,9 @@ fi
 
 #history of commands run in this directory and subdirectories (with grep)
 function dh {
-if [ $1 ]
+if [ "$1" ]
 then
-    grep "$(readlink -e $PWD)" ~/.bash_all_history | grep $1
+    grep "$(readlink -e $PWD)" ~/.bash_all_history | grep "$1"
 else
     grep "$(readlink -e $PWD)" ~/.bash_all_history
 fi
@@ -47,9 +47,9 @@ fi
 
 #history of commands run in this directory only (with grep)
 function ldh {
-if [ $1 ]
+if [ "$1" ]
 then
-    grep "$(readlink -e $PWD)" ~/.bash_all_history | grep $1
+    grep "$(readlink -e $PWD)" ~/.bash_all_history | grep "$1"
 else
     grep "$(readlink -e $PWD)" ~/.bash_all_history
 fi
