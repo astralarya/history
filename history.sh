@@ -23,7 +23,7 @@
 
 #set up history logging of commands
 export HISTTIMEFORMAT='%F %T '
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'printf "%q %q %b\n" "$USER@$HOSTNAME" "$(readlink -e -- "$PWD")" "$(cat <(history 1 | head -1 | cut -d " " -f4-) <(history 1 | tail -n +2))" >> ~/.bash_all_history'
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'printf "%q %q %b\n###\n" "$USER@$HOSTNAME" "$(readlink -e -- "$PWD")" "$(cat <(history 1 | head -1 | cut -d " " -f4-) <(history 1 | tail -n +2))" >> ~/.bash_all_history'
 
 #grep history
 function gh {
