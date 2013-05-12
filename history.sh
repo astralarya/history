@@ -23,35 +23,37 @@
 
 #set up history logging of commands
 export HISTTIMEFORMAT='%F %T '
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'printf "%q %q %b\n###\n" "$USER@$HOSTNAME" "$(readlink -e -- "$PWD")" "$(cat <(history 1 | head -1 | cut -d " " -f4-) <(history 1 | tail -n +2))" >> ~/.bash_all_history'
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'printf "%q %q %b\n\x00" "$USER@$HOSTNAME" "$(readlink -e -- "$PWD")" "$(cat <(history 1 | head -1 | cut -d " " -f4-) <(history 1 | tail -n +2))" >> ~/.bash_all_history'
 
 #grep history
 function gh {
 if [ "$1" ]
 then
-    grep "$1" ~/.bash_all_history
+    grep -z "$1" ~/.bash_all_history
 else
-    less +G ~/.bash_all_history
+    tr < ~/.bash_all_history -d '\000' | less +G
 fi
 }
 
 #history of commands run in this directory and subdirectories (with grep)
 function dh {
+local directory="$(printf '%q' "$(readlink -e -- "$PWD")")"
 if [ "$1" ]
 then
-    grep -F "$(printf '%q' "$(readlink -e -- "$PWD")")" ~/.bash_all_history | grep "$1"
+    grep -Fz "$directory" ~/.bash_all_history | grep -z "$1"
 else
-    grep -F "$(printf '%q' "$(readlink -e -- "$PWD")")" ~/.bash_all_history
+    grep -Fz "$directory" ~/.bash_all_history
 fi
 }
 
 #history of commands run in this directory only (with grep)
 function ldh {
+local directory="$(printf '%q ' "$(readlink -e -- "$PWD")")"
 if [ "$1" ]
 then
-    grep -F "$(printf '%q ' "$(readlink -e -- "$PWD")")" ~/.bash_all_history | grep "$1"
+    grep -Fz "$directory" ~/.bash_all_history | grep -z "$1"
 else
-    grep -F "$(printf '%q ' "$(readlink -e -- "$PWD")")" ~/.bash_all_history
+    grep -Fz "$directory" ~/.bash_all_history
 fi
 }
 
