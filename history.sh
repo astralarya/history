@@ -31,19 +31,19 @@ ALL_HISTORY_FILE=~/.bash_all_history
 #set up history logging of commands
 export HISTTIMEFORMAT='%F %T '
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} _log_history"
-_OLDPWD="$OLDPWD"
+_PWD="$PWD"
 ALL_HISTORY_INIT=""
 
 # logging function
 function _log_history {
 if [ "$ALL_HISTORY_INIT" ]
 then
- if [ "$_OLDPWD" = "$OLDPWD" ]
+ if [ "$_PWD" = "$PWD" ]
  then
   local directory="$(readlink -e -- "$PWD")"
  else
   local directory="$(readlink -e -- "$OLDPWD")"
-  _OLDPWD="$OLDPWD"
+  _PWD="$PWD"
  fi
  printf '%q %q %b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
 else
