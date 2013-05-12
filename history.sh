@@ -25,7 +25,24 @@
 export HISTTIMEFORMAT='%F %T '
 _OLDPWD="$OLDPWD"
 HISTORY_INIT=""
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} if [ \"\$HISTORY_INIT\" ]; then printf '%q %q %b\n\x00' \"\$USER@\$HOSTNAME\" \"\$(if [ \"\$_OLDPWD\" = \"\$OLDPWD\" ]; then readlink -e -- \"\$PWD\"; else readlink -e -- \"\$OLDPWD\"; fi)\" \"\$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))\" >> ~/.bash_all_history; _OLDPWD=\"\$OLDPWD\"; else HISTORY_INIT=1; fi;"
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} _log_history"
+
+# logging function
+function _log_history {
+if [ "$HISTORY_INIT" ]
+then
+ if [ "$_OLDPWD" = "$OLDPWD" ]
+ then
+  local directory="$(readlink -e -- "$PWD")"
+ else
+  local directory="$(readlink -e -- "$OLDPWD")"
+  _OLDPWD="$OLDPWD"
+ fi
+ printf '%q %q %b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))" >> ~/.bash_all_history
+else
+ HISTORY_INIT=1
+fi
+}
 
 #grep history
 function gh {
