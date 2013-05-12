@@ -29,7 +29,7 @@ PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }"'printf "%q %q %b\n\x00" "
 function gh {
 if [ "$1" ]
 then
-    grep -z "$1" ~/.bash_all_history
+    grep -ze "$1" ~/.bash_all_history
 else
     tr < ~/.bash_all_history -d '\000' | less +G
 fi
@@ -40,9 +40,9 @@ function dh {
 local directory="$(printf '%q' "$(readlink -e -- "$PWD")")"
 if [ "$1" ]
 then
-    grep -Fz "$directory" ~/.bash_all_history | grep -z "$1"
+    grep -Fze "$directory" ~/.bash_all_history | grep -ze "$1"
 else
-    grep -Fz "$directory" ~/.bash_all_history
+    grep -Fze "$directory" ~/.bash_all_history
 fi
 }
 
@@ -51,9 +51,9 @@ function ldh {
 local directory="$(printf '%q ' "$(readlink -e -- "$PWD")")"
 if [ "$1" ]
 then
-    grep -Fz "$directory" ~/.bash_all_history | grep -z "$1"
+    grep -Fze "$directory" ~/.bash_all_history | grep -ze "$1"
 else
-    grep -Fz "$directory" ~/.bash_all_history
+    grep -Fze "$directory" ~/.bash_all_history
 fi
 }
 
