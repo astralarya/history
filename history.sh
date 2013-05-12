@@ -20,11 +20,13 @@
 ### USAGE ###
 # Source this file in your shell's .*rc file
 
+
 ### SETTINGS ###
 
 ALL_HISTORY_FILE=~/.bash_all_history
 
 ### END SETTINGS ###
+
 
 #set up history logging of commands
 export HISTTIMEFORMAT='%F %T '
