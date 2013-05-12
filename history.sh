@@ -20,6 +20,11 @@
 ### USAGE ###
 # Source this file in your shell's .*rc file
 
+### SETTINGS ###
+
+ALL_HISTORY_FILE=~/.bash_all_history
+
+### END SETTINGS ###
 
 #set up history logging of commands
 export HISTTIMEFORMAT='%F %T '
@@ -38,7 +43,7 @@ then
   local directory="$(readlink -e -- "$OLDPWD")"
   _OLDPWD="$OLDPWD"
  fi
- printf '%q %q %b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))" >> ~/.bash_all_history
+ printf '%q %q %b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
 else
  HISTORY_INIT=1
 fi
@@ -48,9 +53,9 @@ fi
 function gh {
 if [ "$1" ]
 then
-    grep -ze "$1" ~/.bash_all_history
+    grep -ze "$1" "$ALL_HISTORY_FILE"
 else
-    tr < ~/.bash_all_history -d '\000' | less +G
+    tr < "$ALL_HISTORY_FILE" -d '\000' | less +G
 fi
 }
 
@@ -59,9 +64,9 @@ function dh {
 local directory="$(printf '%q' "$(readlink -e -- "$PWD")")"
 if [ "$1" ]
 then
-    grep -Fze "$directory" ~/.bash_all_history | grep -ze "$1"
+    grep -Fze "$directory" "$ALL_HISTORY_FILE" | grep -ze "$1"
 else
-    grep -Fze "$directory" ~/.bash_all_history
+    grep -Fze "$directory" "$ALL_HISTORY_FILE"
 fi
 }
 
@@ -70,9 +75,9 @@ function ldh {
 local directory="$(printf '%q ' "$(readlink -e -- "$PWD")")"
 if [ "$1" ]
 then
-    grep -Fze "$directory" ~/.bash_all_history | grep -ze "$1"
+    grep -Fze "$directory" "$ALL_HISTORY_FILE" | grep -ze "$1"
 else
-    grep -Fze "$directory" ~/.bash_all_history
+    grep -Fze "$directory" "$ALL_HISTORY_FILE"
 fi
 }
 
