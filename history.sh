@@ -23,9 +23,9 @@
 
 #set up history logging of commands
 export HISTTIMEFORMAT='%F %T '
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} _log_history"
 _OLDPWD="$OLDPWD"
 HISTORY_INIT=""
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} _log_history"
 
 # logging function
 function _log_history {
