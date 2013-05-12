@@ -24,7 +24,8 @@
 #set up history logging of commands
 export HISTTIMEFORMAT='%F %T '
 _OLDPWD="$OLDPWD"
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} printf '%q %q %b\n\x00' \"\$USER@\$HOSTNAME\" \"\$(if [ \"\$_OLDPWD\" = \"\$OLDPWD\" ]; then readlink -e -- \"\$PWD\"; else readlink -e -- \"\$OLDPWD\"; fi)\" \"\$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))\" >> ~/.bash_all_history; _OLDPWD=\"\$OLDPWD\""
+HISTORY_INIT=""
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} if [ \"\$HISTORY_INIT\" ]; then printf '%q %q %b\n\x00' \"\$USER@\$HOSTNAME\" \"\$(if [ \"\$_OLDPWD\" = \"\$OLDPWD\" ]; then readlink -e -- \"\$PWD\"; else readlink -e -- \"\$OLDPWD\"; fi)\" \"\$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))\" >> ~/.bash_all_history; _OLDPWD=\"\$OLDPWD\"; else HISTORY_INIT=1; fi;"
 
 #grep history
 function gh {
