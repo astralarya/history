@@ -32,11 +32,11 @@ ALL_HISTORY_FILE=~/.bash_all_history
 export HISTTIMEFORMAT='%F %T '
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} _log_history"
 _OLDPWD="$OLDPWD"
-HISTORY_INIT=""
+ALL_HISTORY_INIT=""
 
 # logging function
 function _log_history {
-if [ "$HISTORY_INIT" ]
+if [ "$ALL_HISTORY_INIT" ]
 then
  if [ "$_OLDPWD" = "$OLDPWD" ]
  then
@@ -47,7 +47,7 @@ then
  fi
  printf '%q %q %b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
 else
- HISTORY_INIT=1
+ ALL_HISTORY_INIT=1
 fi
 }
 
