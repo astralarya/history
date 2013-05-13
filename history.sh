@@ -32,12 +32,18 @@ ALL_HISTORY_FILE=~/.bash_all_history
 export HISTTIMEFORMAT='%F %T '
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} _log_history"
 _PWD="$PWD"
-ALL_HISTORY_INIT=""
+_HISTORY_INDEX=
 
 # logging function
 function _log_history {
-if [ "$ALL_HISTORY_INIT" ]
+local curr_index="$(history 1 | head -1 | sed 's/^ *\([0-9]*\).*/\1/')" 
+if [ -z "$_HISTORY_INDEX" ]
 then
+ # first prompt of session
+ _HISTORY_INDEX="$curr_index"
+elif [ "$_HISTORY_INDEX" != "$curr_index" ]
+then
+ _HISTORY_INDEX="$curr_index"
  if [ "$_PWD" = "$PWD" ]
  then
   local directory="$(readlink -e -- "$PWD")"
@@ -46,8 +52,6 @@ then
   _PWD="$PWD"
  fi
  printf '%q %q %b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
-else
- ALL_HISTORY_INIT=1
 fi
 }
 
