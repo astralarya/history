@@ -36,7 +36,7 @@ _HISTORY_INDEX=
 
 # logging function
 function _log_history {
-local curr_index="$(history 1 | head -1 | sed 's/^ *\([0-9]*\).*/\1/')" 
+local curr_index="$(\history 1 | \head -1 | \sed 's/^ *\([0-9]*\).*/\1/')" 
 if [ -z "$_HISTORY_INDEX" ]
 then
  # first prompt of session
@@ -46,12 +46,12 @@ then
  _HISTORY_INDEX="$curr_index"
  if [ "$_PWD" = "$PWD" ]
  then
-  local directory="$(readlink -e -- "$PWD")"
+  local directory="$(\readlink -e -- "$PWD")"
  else
-  local directory="$(readlink -e -- "$OLDPWD")"
+  local directory="$(\readlink -e -- "$OLDPWD")"
   _PWD="$PWD"
  fi
- printf '%q %q %b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^ *[0-9]* *//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
+ \printf '%q %q %b\n\x00' "$USER@$HOSTNAME" "$directory" "$(\cat <(\history 1 | \head -1 | \sed 's/^ *[0-9]* *//') <(\history 1 | \tail -n +2))" >> "$ALL_HISTORY_FILE"
 fi
 }
 
@@ -59,31 +59,31 @@ fi
 function gh {
 if [ "$1" ]
 then
-    grep -ze "$1" "$ALL_HISTORY_FILE"
+    \grep -ze "$1" "$ALL_HISTORY_FILE"
 else
-    tr < "$ALL_HISTORY_FILE" -d '\000' | less +G
+    \tr < "$ALL_HISTORY_FILE" -d '\000' | \less +G
 fi
 }
 
 #history of commands run in this directory and subdirectories (with grep)
 function dh {
-local directory="$(printf '%q' "$(readlink -e -- "$PWD")")"
+local directory="$(\printf '%q' "$(\readlink -e -- "$PWD")")"
 if [ "$1" ]
 then
-    grep -Fze "$directory" "$ALL_HISTORY_FILE" | grep -ze "$1"
+    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$1"
 else
-    grep -Fze "$directory" "$ALL_HISTORY_FILE"
+    \grep -Fze "$directory" "$ALL_HISTORY_FILE"
 fi
 }
 
 #history of commands run in this directory only (with grep)
 function ldh {
-local directory="$(printf '%q ' "$(readlink -e -- "$PWD")")"
+local directory="$(\printf '%q ' "$(\readlink -e -- "$PWD")")"
 if [ "$1" ]
 then
-    grep -Fze "$directory" "$ALL_HISTORY_FILE" | grep -ze "$1"
+    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$1"
 else
-    grep -Fze "$directory" "$ALL_HISTORY_FILE"
+    \grep -Fze "$directory" "$ALL_HISTORY_FILE"
 fi
 }
 
