@@ -59,7 +59,7 @@ fi
 function gh {
 if [ "$*" ]
 then
-    \grep -ze "$*" "$ALL_HISTORY_FILE"
+    \grep -ze "$(\printf '%s.*' "$@")" "$ALL_HISTORY_FILE"
 else
     \tr < "$ALL_HISTORY_FILE" -d '\000' | \less +G
 fi
@@ -70,7 +70,7 @@ function dh {
 local directory="$(\printf '%q' "$(\readlink -e -- "$PWD")")"
 if [ "$*" ]
 then
-    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$*"
+    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$(\printf '%s.*' "$@")"
 else
     \grep -Fze "$directory" "$ALL_HISTORY_FILE"
 fi
@@ -81,7 +81,7 @@ function ldh {
 local directory="$(\printf '%q ' "$(\readlink -e -- "$PWD")")"
 if [ "$*" ]
 then
-    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$*"
+    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$(\printf '%s.*' "$@")"
 else
     \grep -Fze "$directory" "$ALL_HISTORY_FILE"
 fi
