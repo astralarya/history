@@ -57,9 +57,9 @@ fi
 
 #grep history
 function gh {
-if [ "$1" ]
+if [ "$*" ]
 then
-    \grep -ze "$1" "$ALL_HISTORY_FILE"
+    \grep -ze "$*" "$ALL_HISTORY_FILE"
 else
     \tr < "$ALL_HISTORY_FILE" -d '\000' | \less +G
 fi
@@ -68,9 +68,9 @@ fi
 #history of commands run in this directory and subdirectories (with grep)
 function dh {
 local directory="$(\printf '%q' "$(\readlink -e -- "$PWD")")"
-if [ "$1" ]
+if [ "$*" ]
 then
-    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$1"
+    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$*"
 else
     \grep -Fze "$directory" "$ALL_HISTORY_FILE"
 fi
@@ -79,9 +79,9 @@ fi
 #history of commands run in this directory only (with grep)
 function ldh {
 local directory="$(\printf '%q ' "$(\readlink -e -- "$PWD")")"
-if [ "$1" ]
+if [ "$*" ]
 then
-    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$1"
+    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$*"
 else
     \grep -Fze "$directory" "$ALL_HISTORY_FILE"
 fi
