@@ -67,12 +67,15 @@ fi
 
 #history of commands run in this directory and subdirectories (with grep)
 function dh {
-local directory="$(\printf '^[^\\t]+\\t%q' "$(\readlink -e -- "$PWD")")"
+local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
+gawk -vdirectory="$directory" -vsearch="$*" \
+  'BEGIN { RS="\0"; FS="\t"; }
+   index($2,directory) == 1 {printf "%s",$0}' "$ALL_HISTORY_FILE" |
 if [ "$*" ]
 then
-    \grep -Pze "$directory" "$ALL_HISTORY_FILE" | \grep -Pze "$(printf '^[^\\t]+\\t[^\\t]+\\t%s' "$(\printf '.*%s' "$@")")"
+    \grep -Pze "$(printf '^[^\\t]+\\t[^\\t]+\\t%s' "$(\printf '.*%s' "$@")")"
 else
-    \grep -Pze "$directory" "$ALL_HISTORY_FILE"
+    cat
 fi
 }
 
