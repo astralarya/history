@@ -51,7 +51,7 @@ then
   local directory="$(\readlink -e -- "$OLDPWD")"
   _PWD="$PWD"
  fi
- \printf '%q %q %b\n\x00' "$USER@$HOSTNAME" "$directory" "$(\cat <(\history 1 | \head -1 | \sed 's/^ *[0-9]* *//') <(\history 1 | \tail -n +2))" >> "$ALL_HISTORY_FILE"
+ \printf '%q\t%q\t%b\n\x00' "$USER@$HOSTNAME" "$directory" "$(\cat <(\history 1 | \head -1 | \sed 's/^ *[0-9]* *//;s/^\([-0-9]* [0-9:]*\) /\1\t/') <(\history 1 | \tail -n +2))" >> "$ALL_HISTORY_FILE"
 fi
 }
 
