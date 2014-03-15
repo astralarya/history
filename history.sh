@@ -29,7 +29,7 @@ ALL_HISTORY_FILE=~/.bash_all_history
 
 
 #set up history logging of commands
-export HISTTIMEFORMAT='%F %T '
+export HISTTIMEFORMAT='	%F %T	'
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND;} _log_history"
 _PWD="$PWD"
 _HISTORY_INDEX=
@@ -51,7 +51,7 @@ then
   local directory="$(\readlink -e -- "$OLDPWD")"
   _PWD="$PWD"
  fi
- \printf '%q\t%q\t%b\n\x00' "$USER@$HOSTNAME" "$directory" "$(\cat <(\history 1 | \head -1 | \sed 's/^ *[0-9]* *//;s/^\([-0-9]* [0-9:]*\) /\1\t/') <(\history 1 | \tail -n +2))" >> "$ALL_HISTORY_FILE"
+ \printf '%q\t%q\t%b\n\x00' "$USER@$HOSTNAME" "$directory" "$(\cat <(\history 1 | \head -1 | \sed 's/^[^\t]*\t//') <(\history 1 | \tail -n +2))" >> "$ALL_HISTORY_FILE"
 fi
 }
 
@@ -67,23 +67,23 @@ fi
 
 #history of commands run in this directory and subdirectories (with grep)
 function dh {
-local directory="$(\printf '%q' "$(\readlink -e -- "$PWD")")"
+local directory="$(\printf '^[^\\t]+\\t%q' "$(\readlink -e -- "$PWD")")"
 if [ "$*" ]
 then
-    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$(\printf '%s.*' "$@")"
+    \grep -Pze "$directory" "$ALL_HISTORY_FILE" | \grep -Pze "$(printf '^[^\\t]+\\t[^\\t]+\\t%s' "$(\printf '.*%s' "$@")")"
 else
-    \grep -Fze "$directory" "$ALL_HISTORY_FILE"
+    \grep -Pze "$directory" "$ALL_HISTORY_FILE"
 fi
 }
 
 #history of commands run in this directory only (with grep)
 function ldh {
-local directory="$(\printf '%q ' "$(\readlink -e -- "$PWD")")"
+local directory="$(\printf '^[^\\t]+\\t%q\\t' "$(\readlink -e -- "$PWD")")"
 if [ "$*" ]
 then
-    \grep -Fze "$directory" "$ALL_HISTORY_FILE" | \grep -ze "$(\printf '%s.*' "$@")"
+    \grep -Pze "$directory" "$ALL_HISTORY_FILE" | \grep -Pze "$(printf '^[^\\t]+\\t[^\\t]+\\t%s' "$(\printf '.*%s' "$@")")"
 else
-    \grep -Fze "$directory" "$ALL_HISTORY_FILE"
+    \grep -Pze "$directory" "$ALL_HISTORY_FILE"
 fi
 }
 
