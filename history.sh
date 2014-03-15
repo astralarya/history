@@ -70,23 +70,16 @@ function dh {
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
 gawk -vdirectory="$directory" -vsearch="$*" \
   'BEGIN { RS="\0"; FS="\t"; }
-   index($2,directory) == 1 {printf "%s",$0}' "$ALL_HISTORY_FILE" |
-if [ "$*" ]
-then
-    \grep -Pze "$(printf '^[^\\t]+\\t[^\\t]+\\t%s' "$(\printf '.*%s' "$@")")"
-else
-    cat
-fi
+   { for(i = 5; i <= NF; i++) $4 = $4+$i }
+   index($2,directory) == 1 {if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE"
 }
 
 #history of commands run in this directory only (with grep)
 function ldh {
-local directory="$(\printf '^[^\\t]+\\t%q\\t' "$(\readlink -e -- "$PWD")")"
-if [ "$*" ]
-then
-    \grep -Pze "$directory" "$ALL_HISTORY_FILE" | \grep -Pze "$(printf '^[^\\t]+\\t[^\\t]+\\t%s' "$(\printf '.*%s' "$@")")"
-else
-    \grep -Pze "$directory" "$ALL_HISTORY_FILE"
-fi
+local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
+gawk -vdirectory="$directory" -vsearch="$*" \
+  'BEGIN { RS="\0"; FS="\t"; }
+   { for(i = 5; i <= NF; i++) $4 = $4+$i }
+   index($2,directory) == 1 && length($2) == length(directory) {if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE"
 }
 
