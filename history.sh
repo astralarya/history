@@ -70,7 +70,8 @@ local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
 gawk -vdirectory="$directory" -vsearch="$*" \
   'BEGIN { RS="\0"; FS="\t"; }
    { for(i = 5; i <= NF; i++) $4 = $4+$i }
-   index($2,directory) == 1 {if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE"
+   index($2,directory) == 1 {if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+    \tr -d '\000' | \less +G
 }
 
 #history of commands run in this directory only (with grep)
@@ -79,6 +80,7 @@ local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
 gawk -vdirectory="$directory" -vsearch="$*" \
   'BEGIN { RS="\0"; FS="\t"; }
    { for(i = 5; i <= NF; i++) $4 = $4+$i }
-   index($2,directory) == 1 && length($2) == length(directory) {if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE"
+   index($2,directory) == 1 && length($2) == length(directory) {if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+    \tr -d '\000' | \less +G
 }
 
