@@ -79,7 +79,7 @@ function dh {
         elif [ "$state" = "time" ]
         then
             timespec="$timespec $arg"
-            if [ "${arg/*]/}" ]
+            if [ -z "${arg/*]/}" ]
               then state=""
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
@@ -103,6 +103,18 @@ History of commands run in this directory and subdirectories
 
     local start_time
     local end_time
+    if [ "${timespec/*..*/}" ]
+    then
+      timespec="${timespec#[}"
+      timespec="${timespec%]}"
+      start_time="$timespec"
+      end_time="$timespec"
+    else
+      start_time="${timespec%..*}"
+      start_time="${start_time#[}"
+      end_time="${timespec#*..}"
+      end_time="${end_time%]}"
+    fi
 
 if [ "$start_time" ]
   then start_time="$(date -d "$start_time" '+%F %T')"
