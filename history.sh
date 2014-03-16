@@ -120,7 +120,7 @@ fi
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
 gawk -vstart_time="$start_time" -vend_time="$end_time"  -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
-   { for(i = 5; i <= NF; i++) $4 = $4+$i }
+   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i }
    { if((length(start_time) == 0 || $3 >= start_time) &&
        (length(end_time) == 0 || $3 <= end_time) &&
        (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
@@ -192,7 +192,7 @@ fi
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
 gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory" -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
-   { for(i = 5; i <= NF; i++) $4 = $4+$i }
+   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i }
    index($2,directory) == 1 {
        if((length(start_time) == 0 || $3 >= start_time) &&
        (length(end_time) == 0 || $3 <= end_time) &&
@@ -265,7 +265,7 @@ fi
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
 gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory" -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
-   { for(i = 5; i <= NF; i++) $4 = $4+$i }
+   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i }
    index($2,directory) == 1 && length($2) == length(directory) {
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
