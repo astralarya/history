@@ -86,6 +86,9 @@ function dh {
         then
             \printf 'Usage: dh [TIMESPEC] [SEARCH]
 History of commands run in this directory and subdirectories
+TIMESPEC is an argument of the form "[START..END]",
+where START and END are strings understood by `date`.
+SEARCH is a regular expression understood by `gawk`.
 '
             return 0
         elif [ "$arg" = "--" ]
