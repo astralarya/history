@@ -111,10 +111,20 @@ SEARCH is a regular expression understood by `gawk`.
     fi
 
 if [ "$start_time" ]
-  then start_time="$(date -d "$start_time" '+%F %T')"
+then
+  start_time="$(date -d "$start_time" '+%F %T')"
+  if [ -z "$start_time" ]
+  then
+    return 1
+  fi
 fi
 if [ "$end_time" ]
-  then end_time="$(date -d "$end_time" '+%F %T')"
+then
+  end_time="$(date -d "$end_time" '+%F %T')"
+  if [ -z "$end_time" ]
+  then
+    return 1
+  fi
 fi
 
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
@@ -122,7 +132,7 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i }
 
-   (length(start_time) == 0 || $3 >= start_time && $3 <= end_time),(length(end_time) > 0 && $3 > end_time) {
+   (length(start_time) == 0 && $3 <= end_time || $3 >= start_time && $3 <= end_time),(length(end_time) > 0 && $3 > end_time) {
      if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE" |
     \tr -d '\000' | \less +G
 }
@@ -183,10 +193,20 @@ SEARCH is a regular expression understood by `gawk`.
     fi
 
 if [ "$start_time" ]
-  then start_time="$(date -d "$start_time" '+%F %T')"
+then
+  start_time="$(date -d "$start_time" '+%F %T')"
+  if [ -z "$start_time" ]
+  then
+    return 1
+  fi
 fi
 if [ "$end_time" ]
-  then end_time="$(date -d "$end_time" '+%F %T')"
+then
+  end_time="$(date -d "$end_time" '+%F %T')"
+  if [ -z "$end_time" ]
+  then
+    return 1
+  fi
 fi
 
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
@@ -254,10 +274,20 @@ SEARCH is a regular expression understood by `gawk`.
     fi
 
 if [ "$start_time" ]
-  then start_time="$(date -d "$start_time" '+%F %T')"
+then
+  start_time="$(date -d "$start_time" '+%F %T')"
+  if [ -z "$start_time" ]
+  then
+    return 1
+  fi
 fi
 if [ "$end_time" ]
-  then end_time="$(date -d "$end_time" '+%F %T')"
+then
+  end_time="$(date -d "$end_time" '+%F %T')"
+  if [ -z "$end_time" ]
+  then
+    return 1
+  fi
 fi
 
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
