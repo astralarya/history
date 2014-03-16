@@ -57,10 +57,73 @@ fi
 
 #gawk history
 function gh {
-gawk -vsearch="$*" \
+    # read arguments
+    local state
+    local search
+    local timespec
+
+    for arg in "$@"
+    do
+        if [ "$state" = "input" ]
+        then
+            search="$search $arg"
+        elif [ "$state" = "time" ]
+        then
+            timespec="$timespec $arg"
+            if [ -z "${arg/*]/}" ]
+              then state=""
+            fi
+        elif [ "$arg" = "-h" -o "$arg" = "--help" ]
+        then
+            \printf 'Usage: gh [TIMESPEC] [SEARCH]
+Search history of commands.
+TIMESPEC is an argument of the form "[START..END]",
+where START and END are strings understood by `date`.
+SEARCH is a regular expression understood by `gawk`.
+'
+            return 0
+        elif [ "$arg" = "--" ]
+          then state="input"
+        elif [ -z "${arg/\[*/}" -a ! "$timespec" ]
+        then
+            timespec="$arg"
+            if [ "${arg/*]/}" ]
+              then state="time"
+            fi
+        else
+            search="$search $arg"
+        fi
+    done
+
+    local start_time
+    local end_time
+    if [ "${timespec/*..*/}" ]
+    then
+      timespec="${timespec#[}"
+      timespec="${timespec%]}"
+      start_time="$timespec"
+      end_time="$timespec"
+    else
+      start_time="${timespec%..*}"
+      start_time="${start_time#[}"
+      end_time="${timespec#*..}"
+      end_time="${end_time%]}"
+    fi
+
+if [ "$start_time" ]
+  then start_time="$(date -d "$start_time" '+%F %T')"
+fi
+if [ "$end_time" ]
+  then end_time="$(date -d "$end_time" '+%F %T')"
+fi
+
+local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
+gawk -vstart_time="$start_time" -vend_time="$end_time"  -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
    { for(i = 5; i <= NF; i++) $4 = $4+$i }
-   index($2,directory) == 1 {if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+   { if((length(start_time) == 0 || $3 >= start_time) &&
+       (length(end_time) == 0 || $3 <= end_time) &&
+       (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
     \tr -d '\000' | \less +G
 }
 
@@ -130,19 +193,83 @@ local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
 gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory" -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
    { for(i = 5; i <= NF; i++) $4 = $4+$i }
-   index($2,directory) == 1 { if((length(start_time) == 0 || $3 >= start_time) &&
-                                 (length(end_time) == 0 || $3 <= end_time) &&
-                                 (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+   index($2,directory) == 1 {
+       if((length(start_time) == 0 || $3 >= start_time) &&
+       (length(end_time) == 0 || $3 <= end_time) &&
+       (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
     \tr -d '\000' | \less +G
 }
 
 #history of commands run in this directory only (with grep)
 function ldh {
+    # read arguments
+    local state
+    local search
+    local timespec
+
+    for arg in "$@"
+    do
+        if [ "$state" = "input" ]
+        then
+            search="$search $arg"
+        elif [ "$state" = "time" ]
+        then
+            timespec="$timespec $arg"
+            if [ -z "${arg/*]/}" ]
+              then state=""
+            fi
+        elif [ "$arg" = "-h" -o "$arg" = "--help" ]
+        then
+            \printf 'Usage: ldh [TIMESPEC] [SEARCH]
+History of commands run in this directory only
+TIMESPEC is an argument of the form "[START..END]",
+where START and END are strings understood by `date`.
+SEARCH is a regular expression understood by `gawk`.
+'
+            return 0
+        elif [ "$arg" = "--" ]
+          then state="input"
+        elif [ -z "${arg/\[*/}" -a ! "$timespec" ]
+        then
+            timespec="$arg"
+            if [ "${arg/*]/}" ]
+              then state="time"
+            fi
+        else
+            search="$search $arg"
+        fi
+    done
+
+    local start_time
+    local end_time
+    if [ "${timespec/*..*/}" ]
+    then
+      timespec="${timespec#[}"
+      timespec="${timespec%]}"
+      start_time="$timespec"
+      end_time="$timespec"
+    else
+      start_time="${timespec%..*}"
+      start_time="${start_time#[}"
+      end_time="${timespec#*..}"
+      end_time="${end_time%]}"
+    fi
+
+if [ "$start_time" ]
+  then start_time="$(date -d "$start_time" '+%F %T')"
+fi
+if [ "$end_time" ]
+  then end_time="$(date -d "$end_time" '+%F %T')"
+fi
+
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
-gawk -vdirectory="$directory" -vsearch="$*" \
+gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory" -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
    { for(i = 5; i <= NF; i++) $4 = $4+$i }
-   index($2,directory) == 1 && length($2) == length(directory) {if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+   index($2,directory) == 1 && length($2) == length(directory) {
+       if((length(start_time) == 0 || $3 >= start_time) &&
+          (length(end_time) == 0 || $3 <= end_time) &&
+          (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
     \tr -d '\000' | \less +G
 }
 
