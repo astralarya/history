@@ -55,14 +55,13 @@ then
 fi
 }
 
-#grep history
+#gawk history
 function gh {
-if [ "$*" ]
-then
-    \grep -ze "$(\printf '%s.*' "$@")" "$ALL_HISTORY_FILE"
-else
-    \tr < "$ALL_HISTORY_FILE" -d '\000' | \less +G
-fi
+gawk -vsearch="$*" \
+  'BEGIN { RS="\0"; FS="\t"; }
+   { for(i = 5; i <= NF; i++) $4 = $4+$i }
+   index($2,directory) == 1 {if(length(search) == 0 || $4 ~ search ) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+    \tr -d '\000' | \less +G
 }
 
 #history of commands run in this directory and subdirectories (with grep)
