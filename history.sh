@@ -214,8 +214,8 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory"
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i }
    index($2,directory) == 1 {
        if((length(start_time) == 0 || $3 >= start_time) &&
-       (length(end_time) == 0 || $3 <= end_time) &&
-       (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+          (length(end_time) == 0 || $3 <= end_time) &&
+          (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
     \tr -d '\000' | \less +G
 }
 
