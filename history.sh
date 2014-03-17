@@ -100,9 +100,9 @@ SEARCH is a regular expression understood by `gawk`.
     if [ "${timespec/*..*/}" ]
     then
       timespec="${timespec#[}"
-      timespec="${timespec%]}"
-      start_time="$timespec"
-      end_time="$timespec"
+      timespec="$(date -d "${timespec%]}" '+%F')"
+      start_time="$timespec 0"
+      end_time="$timespec 0+1day"
     else
       start_time="${timespec%..*}"
       start_time="${start_time#[}"
@@ -181,9 +181,9 @@ SEARCH is a regular expression understood by `gawk`.
     if [ "${timespec/*..*/}" ]
     then
       timespec="${timespec#[}"
-      timespec="${timespec%]}"
-      start_time="$timespec"
-      end_time="$timespec"
+      timespec="$(date -d "${timespec%]}" '+%F')"
+      start_time="$timespec 0"
+      end_time="$timespec 0+1day"
     else
       start_time="${timespec%..*}"
       start_time="${start_time#[}"
@@ -264,9 +264,9 @@ SEARCH is a regular expression understood by `gawk`.
     if [ "${timespec/*..*/}" ]
     then
       timespec="${timespec#[}"
-      timespec="${timespec%]}"
-      start_time="$timespec"
-      end_time="$timespec"
+      timespec="$(date -d "${timespec%]}" '+%F')"
+      start_time="$timespec 0"
+      end_time="$timespec 0+1day"
     else
       start_time="${timespec%..*}"
       start_time="${start_time#[}"
