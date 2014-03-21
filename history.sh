@@ -56,7 +56,7 @@ function gh {
     do
         if [ "$state" = "input" ]
         then
-            search="$search $arg"
+            search+="$arg"
         elif [ "$state" = "time" ]
         then
             timespec="$timespec $arg"
@@ -81,7 +81,7 @@ SEARCH is a regular expression understood by `gawk`.
               then state="time"
             fi
         else
-            search="$search $arg"
+            search+="$arg"
         fi
     done
 
@@ -119,10 +119,10 @@ fi
 
 gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
-   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i }
+   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
    { if((length(start_time) == 0 || $3 >= start_time) &&
         (length(end_time) == 0 || $3 <= end_time) &&
-        (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+        (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
     \tr -d '\000' | \less +G
 }
 
@@ -137,7 +137,7 @@ function dh {
     do
         if [ "$state" = "input" ]
         then
-            search="$search $arg"
+            search+="$arg"
         elif [ "$state" = "time" ]
         then
             timespec="$timespec $arg"
@@ -162,7 +162,7 @@ SEARCH is a regular expression understood by `gawk`.
               then state="time"
             fi
         else
-            search="$search $arg"
+            search+="$arg"
         fi
     done
 
@@ -201,11 +201,11 @@ fi
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
 gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory" -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
-   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i }
+   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
    index($2,directory) == 1 {
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
-          (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+          (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
     \tr -d '\000' | \less +G
 }
 
@@ -220,7 +220,7 @@ function ldh {
     do
         if [ "$state" = "input" ]
         then
-            search="$search $arg"
+            search+="$arg"
         elif [ "$state" = "time" ]
         then
             timespec="$timespec $arg"
@@ -245,7 +245,7 @@ SEARCH is a regular expression understood by `gawk`.
               then state="time"
             fi
         else
-            search="$search $arg"
+            search+="$arg"
         fi
     done
 
@@ -284,11 +284,11 @@ fi
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
 gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory" -vsearch="$search" \
   'BEGIN { RS="\0"; FS="\t"; }
-   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i }
+   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
    index($2,directory) == 1 && length($2) == length(directory) {
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
-          (length(search) == 0 || $4 ~ search )) printf "%s",$0}' "$ALL_HISTORY_FILE" |
+          (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
     \tr -d '\000' | \less +G
 }
 
