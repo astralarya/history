@@ -123,7 +123,7 @@ gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" \
    { if((length(start_time) == 0 || $3 >= start_time) &&
         (length(end_time) == 0 || $3 <= end_time) &&
         (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-    \tr -d '\000' | \less +G
+    \less +G
 }
 
 #history of commands run in this directory and subdirectories (with grep)
@@ -206,7 +206,7 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory"
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
           (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-    \tr -d '\000' | \less +G
+    \less +G
 }
 
 #history of commands run in this directory only (with grep)
@@ -289,6 +289,6 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory"
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
           (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-    \tr -d '\000' | \less +G
+    \less +G
 }
 
