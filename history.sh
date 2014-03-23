@@ -208,8 +208,8 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory"
    index($2,directory) == 1 {
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
-          (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-    \less +G
+          (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
+\less -F +G
 }
 
 #history of commands run in this directory only (with grep)
@@ -291,7 +291,7 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory"
    index($2,directory) == 1 && length($2) == length(directory) {
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
-          (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-    \less +G
+          (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
+\less -F +G
 }
 
