@@ -51,6 +51,9 @@ function gh {
     local state
     local search
     local timespec
+    local user
+    local host
+    local directory
 
     for arg in "$@"
     do
@@ -65,7 +68,7 @@ function gh {
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            \printf 'Usage: gh [TIMESPEC] [SEARCH]
+            \printf 'Usage: gh [TIMESPEC] [CONTEXT] [--] [SEARCH]
 Search history of commands.
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
@@ -122,8 +125,8 @@ gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" \
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
    { if((length(start_time) == 0 || $3 >= start_time) &&
         (length(end_time) == 0 || $3 <= end_time) &&
-        (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-    \less +G
+        (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
+\less -F +G
 }
 
 #history of commands run in this directory and subdirectories (with grep)
