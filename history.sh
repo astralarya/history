@@ -71,7 +71,8 @@ function gh {
 Search history of commands.
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
-SEARCH is a string.
+An "@" is used to specify user or host.
+SEARCH matches against the command. 
 '
             return 0
         elif [ "$arg" = "--" ]
@@ -166,7 +167,8 @@ function dh {
 History of commands run in this directory and subdirectories
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
-SEARCH is a string.
+An "@" is used to specify user or host.
+SEARCH matches against the command. 
 '
             return 0
         elif [ "$arg" = "--" ]
@@ -263,7 +265,8 @@ function ldh {
 History of commands run in this directory only
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
-SEARCH is a string.
+An "@" is used to specify user or host.
+SEARCH matches against the command. 
 '
             return 0
         elif [ "$arg" = "--" ]
