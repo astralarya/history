@@ -129,13 +129,15 @@ then
   fi
 fi
 
-gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" \
-  'BEGIN { RS="\0"; FS="\t"; }
+gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
+  'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
    { if((length(start_time) == 0 || $3 >= start_time) &&
         (length(end_time) == 0 || $3 <= end_time) &&
-        (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less -FX
+        (length(user) == 0 || $1 ~ user_matcher ) &&
+        (length(host) == 0 || $1 ~ host_matcher ) &&
+        (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
+\less -FX +G
 }
 
 #history of commands run in this directory and subdirectories (with grep)
@@ -223,14 +225,16 @@ then
 fi
 
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
-gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory" -vsearch="$search" \
-  'BEGIN { RS="\0"; FS="\t"; }
+gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
+  'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
    index($2,directory) == 1 {
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
-          (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less -FX
+          (length(user) == 0 || $1 ~ user_matcher ) &&
+          (length(host) == 0 || $1 ~ host_matcher ) &&
+          (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
+\less -FX +G
 }
 
 #history of commands run in this directory only (with grep)
@@ -318,13 +322,15 @@ then
 fi
 
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
-gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory" -vsearch="$search" \
-  'BEGIN { RS="\0"; FS="\t"; }
+gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
+  'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
    index($2,directory) == 1 && length($2) == length(directory) {
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
-          (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less -FX
+          (length(user) == 0 || $1 ~ user_matcher ) &&
+          (length(host) == 0 || $1 ~ host_matcher ) &&
+          (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
+\less -FX +G
 }
 
