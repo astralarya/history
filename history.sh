@@ -72,7 +72,7 @@ function gh {
 Search history of commands.
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
-SEARCH is a regular expression understood by `gawk`.
+SEARCH is a string.
 '
             return 0
         elif [ "$arg" = "--" ]
@@ -83,6 +83,9 @@ SEARCH is a regular expression understood by `gawk`.
             if [ "${arg/*]/}" ]
               then state="time"
             fi
+        elif [ -z "${arg/*@*/}" -a ! "$timespec" ]
+        then
+            echo AAA
         else
             search+="$arg"
         fi
@@ -126,7 +129,7 @@ gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" \
    { if((length(start_time) == 0 || $3 >= start_time) &&
         (length(end_time) == 0 || $3 <= end_time) &&
         (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less -F +G
+\less +G
 }
 
 #history of commands run in this directory and subdirectories (with grep)
@@ -209,7 +212,7 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory"
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
           (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less -F +G
+\less +G
 }
 
 #history of commands run in this directory only (with grep)
@@ -292,6 +295,6 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory"
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
           (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less -F +G
+\less +G
 }
 
