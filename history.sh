@@ -227,7 +227,7 @@ then
 fi
 
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
-gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
+gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
   'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
    index($2,directory) == 1 {
@@ -261,7 +261,7 @@ function ldh {
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            \printf 'Usage: gh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
+            \printf 'Usage: ldh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
 History of commands run in this directory only
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
@@ -325,7 +325,7 @@ then
 fi
 
 local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
-gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
+gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
   'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
    index($2,directory) == 1 && length($2) == length(directory) {
