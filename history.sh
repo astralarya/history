@@ -67,7 +67,7 @@ function gh {
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            \printf 'Usage: gh [TIMESPEC] [CONTEXT] [--] [SEARCH]
+            \printf 'Usage: gh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
 Search history of commands.
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
@@ -160,7 +160,7 @@ function dh {
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            \printf 'Usage: dh [TIMESPEC] [CONTEXT] [--] [SEARCH]
+            \printf 'Usage: dh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
 History of commands run in this directory and subdirectories
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
@@ -255,7 +255,7 @@ function ldh {
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            \printf 'Usage: gh [TIMESPEC] [CONTEXT] [--] [SEARCH]
+            \printf 'Usage: gh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
 History of commands run in this directory only
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
