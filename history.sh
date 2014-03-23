@@ -53,7 +53,6 @@ function gh {
     local timespec
     local user
     local host
-    local directory
 
     for arg in "$@"
     do
@@ -83,9 +82,16 @@ SEARCH is a string.
             if [ "${arg/*]/}" ]
               then state="time"
             fi
-        elif [ -z "${arg/*@*/}" -a ! "$timespec" ]
+        elif [ -z "${arg/*@*/}" ]
         then
-            echo AAA
+            if [ "${arg%%@*}" -a ! "$user" ]
+            then
+              user="${arg%%@*}" 
+            fi
+            if [ "${arg#*@}" -a ! "$host" ]
+            then
+              host="${arg#*@}" 
+            fi
         else
             search+="$arg"
         fi
@@ -129,7 +135,7 @@ gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" \
    { if((length(start_time) == 0 || $3 >= start_time) &&
         (length(end_time) == 0 || $3 <= end_time) &&
         (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less +G
+\less -FX
 }
 
 #history of commands run in this directory and subdirectories (with grep)
@@ -138,6 +144,8 @@ function dh {
     local state
     local search
     local timespec
+    local user
+    local host
 
     for arg in "$@"
     do
@@ -152,11 +160,11 @@ function dh {
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            \printf 'Usage: dh [TIMESPEC] [SEARCH]
+            \printf 'Usage: dh [TIMESPEC] [CONTEXT] [--] [SEARCH]
 History of commands run in this directory and subdirectories
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
-SEARCH is a regular expression understood by `gawk`.
+SEARCH is a string.
 '
             return 0
         elif [ "$arg" = "--" ]
@@ -166,6 +174,16 @@ SEARCH is a regular expression understood by `gawk`.
             timespec="$arg"
             if [ "${arg/*]/}" ]
               then state="time"
+            fi
+        elif [ -z "${arg/*@*/}" ]
+        then
+            if [ "${arg%%@*}" -a ! "$user" ]
+            then
+              user="${arg%%@*}" 
+            fi
+            if [ "${arg#*@}" -a ! "$host" ]
+            then
+              host="${arg#*@}" 
             fi
         else
             search+="$arg"
@@ -212,7 +230,7 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory"
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
           (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less +G
+\less -FX
 }
 
 #history of commands run in this directory only (with grep)
@@ -221,6 +239,8 @@ function ldh {
     local state
     local search
     local timespec
+    local user
+    local host
 
     for arg in "$@"
     do
@@ -235,11 +255,11 @@ function ldh {
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            \printf 'Usage: ldh [TIMESPEC] [SEARCH]
+            \printf 'Usage: gh [TIMESPEC] [CONTEXT] [--] [SEARCH]
 History of commands run in this directory only
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
-SEARCH is a regular expression understood by `gawk`.
+SEARCH is a string.
 '
             return 0
         elif [ "$arg" = "--" ]
@@ -249,6 +269,16 @@ SEARCH is a regular expression understood by `gawk`.
             timespec="$arg"
             if [ "${arg/*]/}" ]
               then state="time"
+            fi
+        elif [ -z "${arg/*@*/}" ]
+        then
+            if [ "${arg%%@*}" -a ! "$user" ]
+            then
+              user="${arg%%@*}" 
+            fi
+            if [ "${arg#*@}" -a ! "$host" ]
+            then
+              host="${arg#*@}" 
             fi
         else
             search+="$arg"
@@ -295,6 +325,6 @@ gawk -vstart_time="$start_time" -vend_time="$end_time"  -vdirectory="$directory"
        if((length(start_time) == 0 || $3 >= start_time) &&
           (length(end_time) == 0 || $3 <= end_time) &&
           (length(search) == 0 || index($4,search) > 0 )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less +G
+\less -FX
 }
 
