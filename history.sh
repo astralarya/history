@@ -104,8 +104,8 @@ SEARCH matches against the command.
     then
       timespec="${timespec#[}"
       timespec="$(date -d "${timespec%]}" '+%F')"
-      start_time="$timespec 0"
-      end_time="$timespec 0+1day"
+      start_time="$timespec"
+      end_time="$timespec + 1day"
     else
       start_time="${timespec%..*}"
       start_time="${start_time#[}"
@@ -200,8 +200,8 @@ SEARCH matches against the command.
     then
       timespec="${timespec#[}"
       timespec="$(date -d "${timespec%]}" '+%F')"
-      start_time="$timespec 0"
-      end_time="$timespec 0+1day"
+      start_time="$timespec"
+      end_time="$timespec + 1day"
     else
       start_time="${timespec%..*}"
       start_time="${start_time#[}"
@@ -298,8 +298,8 @@ SEARCH matches against the command.
     then
       timespec="${timespec#[}"
       timespec="$(date -d "${timespec%]}" '+%F')"
-      start_time="$timespec 0"
-      end_time="$timespec 0+1day"
+      start_time="$timespec"
+      end_time="$timespec + 1day"
     else
       start_time="${timespec%..*}"
       start_time="${start_time#[}"
