@@ -31,16 +31,18 @@ ALL_HISTORY_FILE=~/.bash_all_history
 #set up history logging of commands
 export HISTTIMEFORMAT='	%F %T	'
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND} _log_history"
-_PWD="$PWD"
+_PWD="$(pwd -P)"
+__PWD="$_PWD"
 
 # logging function
 function _log_history {
- if [ "$_PWD" = "$PWD" ]
+_PWD="$(pwd -P)"
+ if [ "$__PWD" = "$_PWD" ]
  then
-  local directory="$(\readlink -e -- "$PWD")"
+  local directory="$_PWD"
  else
-  local directory="$(\readlink -e -- "$OLDPWD")"
-  _PWD="$PWD"
+  local directory="$__PWD"
+  __PWD="$_PWD"
  fi
  \printf '%q\t%q\t%b\n\x00' "$USER@$HOSTNAME" "$directory" "$(\cat <(\history 1 | \head -1 | \sed 's/^[^\t]*\t//') <(\history 1 | \tail -n +2))" >> "$ALL_HISTORY_FILE"
 }
@@ -226,7 +228,7 @@ then
   fi
 fi
 
-local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
+local directory="$(\printf '%b' "$(pwd -P)")"
 gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
   'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
@@ -324,7 +326,7 @@ then
   fi
 fi
 
-local directory="$(\printf '%b' "$(\readlink -e -- "$PWD")")"
+local directory="$(\printf '%b' "$(pwd -P)")"
 gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
   'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
    { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
