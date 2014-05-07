@@ -98,14 +98,26 @@ select_history () {
 
   select item in "${history[@]}"
   do
-    # Copy to clipboard
-    printf '%s' "$item" | xclip -selection c
-    # Print status.
-    if [ ${#item} -gt 80 ]
-    then printf "$_scs_col"'Copied to clipboard:\e[0m %s'"$_trn_col"'...\e[0m\n' "$(head -c80 <<<"$item")"
-    else printf "$_scs_col"'Copied to clipboard:\e[0m %s\n' "$item"
-    fi
-    break
+      if command -v xclip &> /dev/null
+      then
+        # Copy to clipboard
+        printf '%s' "$item" | xclip -selection c
+        # Print status.
+        if [ ${#item} -gt 80 ]
+        then printf "$_scs_col"'Copied to clipboard:\e[0m %s'"$_trn_col"'...\e[0m\n' "$(head -c80 <<<"$item")"
+        else printf "$_scs_col"'Copied to clipboard:\e[0m %s\n' "$item"
+        fi
+      else
+        printf '$ %s\nExecute? [y/N] ' "$item"
+        local choice
+        read choice
+        if [ "$choice" = 'y' -o "$choice" = 'Y' ]
+        then
+          eval "$item"
+          history -s "$item"
+        fi
+      fi
+      break
   done
 }
 
