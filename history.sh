@@ -44,22 +44,22 @@ _PWD="$(pwd -P)"
   local directory="$__PWD"
   __PWD="$_PWD"
  fi
- \printf '%q\t%q\t%b\n\x00' "$USER@$HOSTNAME" "$directory" "$(\cat <(\history 1 | \head -1 | \sed 's/^[^\t]*\t//') <(\history 1 | \tail -n +2))" >> "$ALL_HISTORY_FILE"
+ printf '%q\t%q\t%b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^[^\t]*\t//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
 }
 
 # gawk history
-function gh {
-  gawk_history "/" 1 "$@" | \less -FX +G
+gh () {
+  gawk_history "/" 1 "$@" | less -FX +G
 }
 
 #history of commands run in this directory and subdirectories (with grep)
-function dh {
-  gawk_history "$(\printf '%b' "$(pwd -P)")" 1 "$@" | \less -FX +G
+dh () {
+  gawk_history "$(printf '%b' "$(pwd -P)")" 1 "$@" | less -FX +G
 }
 
 #history of commands run in this directory only (with grep)
-function ldh {
-  gawk_history "$(\printf '%b' "$(pwd -P)")" 0 "$@" | \less -FX +G
+ldh () {
+  gawk_history "$(printf '%b' "$(pwd -P)")" 0 "$@" | less -FX +G
 }
 
 # core gawk history implementation
@@ -110,7 +110,7 @@ where START and END are strings understood by `date`.
 An "@" is used to specify user or host.
 SEARCH matches against the command. 
 '
-            else \printf 'Usage: dh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
+            else printf 'Usage: dh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
 History of commands run in this directory and subdirectories
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
