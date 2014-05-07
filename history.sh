@@ -82,6 +82,8 @@ select_history () {
   local histline
   local history
   local item
+  local _scs_col="\e[0;32m"
+  local _trn_col='\e[0;33m'
 
   while \read -r -d '' histline
   do
@@ -96,7 +98,13 @@ select_history () {
 
   select item in "${history[@]}"
   do
-    echo $item
+    # Copy to clipboard
+    printf '%s' "$item" | xclip -selection c
+    # Print status.
+    if [ ${#item} -gt 80 ]
+    then printf "$_scs_col"'Copied to clipboard:\e[0m %s'"$_trn_col"'...\e[0m\n' "$(head -c80 <<<"$item")"
+    else printf "$_scs_col"'Copied to clipboard:\e[0m %s\n' "$item"
+    fi
     break
   done
 }
