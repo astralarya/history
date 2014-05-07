@@ -47,212 +47,43 @@ _PWD="$(pwd -P)"
  \printf '%q\t%q\t%b\n\x00' "$USER@$HOSTNAME" "$directory" "$(\cat <(\history 1 | \head -1 | \sed 's/^[^\t]*\t//') <(\history 1 | \tail -n +2))" >> "$ALL_HISTORY_FILE"
 }
 
-#gawk history
+# gawk history
 function gh {
-    # read arguments
-    local state
-    local search
-    local timespec
-    local user
-    local host
-
-    for arg in "$@"
-    do
-        if [ "$state" = "input" ]
-        then
-            search+="$arg"
-        elif [ "$state" = "time" ]
-        then
-            timespec="$timespec $arg"
-            if [ -z "${arg/*]/}" ]
-              then state=""
-            fi
-        elif [ "$arg" = "-h" -o "$arg" = "--help" ]
-        then
-            \printf 'Usage: gh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
-Search history of commands.
-TIMESPEC is an argument of the form "[START..END]",
-where START and END are strings understood by `date`.
-An "@" is used to specify user or host.
-SEARCH matches against the command. 
-'
-            return 0
-        elif [ "$arg" = "--" ]
-          then state="input"
-        elif [ -z "${arg/\[*/}" -a ! "$timespec" ]
-        then
-            timespec="$arg"
-            if [ "${arg/*]/}" ]
-              then state="time"
-            fi
-        elif [ -z "${arg/*@*/}" ]
-        then
-            if [ "${arg%%@*}" -a ! "$user" ]
-            then
-              user="${arg%%@*}" 
-            fi
-            if [ "${arg#*@}" -a ! "$host" ]
-            then
-              host="${arg#*@}" 
-            fi
-        else
-            search+="$arg"
-        fi
-    done
-
-    local start_time
-    local end_time
-    if [ "${timespec/*..*/}" ]
-    then
-      timespec="${timespec#[}"
-      timespec="$(date -d "${timespec%]}" '+%F')"
-      start_time="$timespec"
-      end_time="$timespec + 1day"
-    else
-      start_time="${timespec%..*}"
-      start_time="${start_time#[}"
-      end_time="${timespec#*..}"
-      end_time="${end_time%]}"
-    fi
-
-if [ "$start_time" ]
-then
-  start_time="$(date -d "$start_time" '+%F %T')"
-  if [ -z "$start_time" ]
-  then
-    return 1
-  fi
-fi
-if [ "$end_time" ]
-then
-  end_time="$(date -d "$end_time" '+%F %T')"
-  if [ -z "$end_time" ]
-  then
-    return 1
-  fi
-fi
-
-gawk -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
-  'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
-   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
-   { if((length(start_time) == 0 || $3 >= start_time) &&
-        (length(end_time) == 0 || $3 <= end_time) &&
-        (length(user) == 0 || $1 ~ user_matcher ) &&
-        (length(host) == 0 || $1 ~ host_matcher ) &&
-        (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less -FX +G
+  gawk_history "/" 1 "$@" | \less -FX +G
 }
 
 #history of commands run in this directory and subdirectories (with grep)
 function dh {
-    # read arguments
-    local state
-    local search
-    local timespec
-    local user
-    local host
-
-    for arg in "$@"
-    do
-        if [ "$state" = "input" ]
-        then
-            search+="$arg"
-        elif [ "$state" = "time" ]
-        then
-            timespec="$timespec $arg"
-            if [ -z "${arg/*]/}" ]
-              then state=""
-            fi
-        elif [ "$arg" = "-h" -o "$arg" = "--help" ]
-        then
-            \printf 'Usage: dh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
-History of commands run in this directory and subdirectories
-TIMESPEC is an argument of the form "[START..END]",
-where START and END are strings understood by `date`.
-An "@" is used to specify user or host.
-SEARCH matches against the command. 
-'
-            return 0
-        elif [ "$arg" = "--" ]
-          then state="input"
-        elif [ -z "${arg/\[*/}" -a ! "$timespec" ]
-        then
-            timespec="$arg"
-            if [ "${arg/*]/}" ]
-              then state="time"
-            fi
-        elif [ -z "${arg/*@*/}" ]
-        then
-            if [ "${arg%%@*}" -a ! "$user" ]
-            then
-              user="${arg%%@*}" 
-            fi
-            if [ "${arg#*@}" -a ! "$host" ]
-            then
-              host="${arg#*@}" 
-            fi
-        else
-            search+="$arg"
-        fi
-    done
-
-    local start_time
-    local end_time
-    if [ "${timespec/*..*/}" ]
-    then
-      timespec="${timespec#[}"
-      timespec="$(date -d "${timespec%]}" '+%F')"
-      start_time="$timespec"
-      end_time="$timespec + 1day"
-    else
-      start_time="${timespec%..*}"
-      start_time="${start_time#[}"
-      end_time="${timespec#*..}"
-      end_time="${end_time%]}"
-    fi
-
-if [ "$start_time" ]
-then
-  start_time="$(date -d "$start_time" '+%F %T')"
-  if [ -z "$start_time" ]
-  then
-    return 1
-  fi
-fi
-if [ "$end_time" ]
-then
-  end_time="$(date -d "$end_time" '+%F %T')"
-  if [ -z "$end_time" ]
-  then
-    return 1
-  fi
-fi
-
-local directory="$(\printf '%b' "$(pwd -P)")"
-gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
-  'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
-   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
-   index($2,directory) == 1 {
-       if((length(start_time) == 0 || $3 >= start_time) &&
-          (length(end_time) == 0 || $3 <= end_time) &&
-          (length(user) == 0 || $1 ~ user_matcher ) &&
-          (length(host) == 0 || $1 ~ host_matcher ) &&
-          (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less -FX +G
+  gawk_history "$(\printf '%b' "$(pwd -P)")" 1 "$@" | \less -FX +G
 }
 
 #history of commands run in this directory only (with grep)
 function ldh {
+  gawk_history "$(\printf '%b' "$(pwd -P)")" 0 "$@" | \less -FX +G
+}
+
+# core gawk history implementation
+gawk_history () {
     # read arguments
-    local state
+    local state="first"
     local search
     local timespec
     local user
     local host
+    local directory
+    local recursive_dir
 
     for arg in "$@"
     do
-        if [ "$state" = "input" ]
+        if [ "$state" = "first" ]
+        then
+            directory="$arg"
+            state="second"
+        elif [ "$state" = "second" ]
+        then
+            recursive_dir="$arg"
+            state=""
+        elif [ "$state" = "input" ]
         then
             search+="$arg"
         elif [ "$state" = "time" ]
@@ -263,13 +94,30 @@ function ldh {
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            \printf 'Usage: ldh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
+            if [ "$recursive_dir" = 0 ]
+            then printf 'Usage: ldh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
 History of commands run in this directory only
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
 An "@" is used to specify user or host.
 SEARCH matches against the command. 
 '
+            elif [ "$directory" = "/" ]
+            then printf 'Usage: gh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
+Search history of commands.
+TIMESPEC is an argument of the form "[START..END]",
+where START and END are strings understood by `date`.
+An "@" is used to specify user or host.
+SEARCH matches against the command. 
+'
+            else \printf 'Usage: dh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
+History of commands run in this directory and subdirectories
+TIMESPEC is an argument of the form "[START..END]",
+where START and END are strings understood by `date`.
+An "@" is used to specify user or host.
+SEARCH matches against the command. 
+'
+            fi
             return 0
         elif [ "$arg" = "--" ]
           then state="input"
@@ -309,33 +157,50 @@ SEARCH matches against the command.
       end_time="${end_time%]}"
     fi
 
-if [ "$start_time" ]
-then
-  start_time="$(date -d "$start_time" '+%F %T')"
-  if [ -z "$start_time" ]
-  then
-    return 1
-  fi
-fi
-if [ "$end_time" ]
-then
-  end_time="$(date -d "$end_time" '+%F %T')"
-  if [ -z "$end_time" ]
-  then
-    return 1
-  fi
-fi
+    if [ "$start_time" ]
+    then
+      start_time="$(date -d "$start_time" '+%F %T')"
+      if [ -z "$start_time" ]
+      then
+        return 1
+      fi
+    fi
+    if [ "$end_time" ]
+    then
+      end_time="$(date -d "$end_time" '+%F %T')"
+      if [ -z "$end_time" ]
+      then
+        return 1
+      fi
+    fi
 
-local directory="$(\printf '%b' "$(pwd -P)")"
-gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
-  'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
-   { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
-   index($2,directory) == 1 && length($2) == length(directory) {
-       if((length(start_time) == 0 || $3 >= start_time) &&
-          (length(end_time) == 0 || $3 <= end_time) &&
-          (length(user) == 0 || $1 ~ user_matcher ) &&
-          (length(host) == 0 || $1 ~ host_matcher ) &&
-          (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE" |
-\less -FX +G
+    if [ "$recursive_dir" = 0 ]
+    then gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
+      'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
+       { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
+       index($2,directory) == 1 && length($2) == length(directory) {
+           if((length(start_time) == 0 || $3 >= start_time) &&
+              (length(end_time) == 0 || $3 <= end_time) &&
+              (length(user) == 0 || $1 ~ user_matcher ) &&
+              (length(host) == 0 || $1 ~ host_matcher ) &&
+              (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
+    elif [ "$directory" = "/" ]
+    then gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
+      'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
+       { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
+       { if((length(start_time) == 0 || $3 >= start_time) &&
+            (length(end_time) == 0 || $3 <= end_time) &&
+            (length(user) == 0 || $1 ~ user_matcher ) &&
+            (length(host) == 0 || $1 ~ host_matcher ) &&
+            (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
+    else gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
+      'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
+       { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
+       index($2,directory) == 1 {
+           if((length(start_time) == 0 || $3 >= start_time) &&
+              (length(end_time) == 0 || $3 <= end_time) &&
+              (length(user) == 0 || $1 ~ user_matcher ) &&
+              (length(host) == 0 || $1 ~ host_matcher ) &&
+              (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
+    fi
 }
-
