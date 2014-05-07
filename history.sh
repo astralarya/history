@@ -49,18 +49,58 @@ _PWD="$(pwd -P)"
 
 # gawk history
 gh () {
-  gawk_history "/" 1 "$@" | less -FX +G
+  gawk_history "/" 1 "$@" | tr -d '\000' | less -FX +G
 }
 
 #history of commands run in this directory and subdirectories (with grep)
 dh () {
-  gawk_history "$(printf '%b' "$(pwd -P)")" 1 "$@" | less -FX +G
+  gawk_history "$(printf '%b' "$(pwd -P)")" 1 "$@" | tr -d '\000' | less -FX +G
 }
 
 #history of commands run in this directory only (with grep)
 ldh () {
-  gawk_history "$(printf '%b' "$(pwd -P)")" 0 "$@" | less -FX +G
+  gawk_history "$(printf '%b' "$(pwd -P)")" 0 "$@" | tr -d '\000' | less -FX +G
 }
+
+# select from history
+gh! () {
+  select_history "/" 1 "$@"
+}
+
+# select from history
+dh! () {
+  select_history "$(printf '%b' "$(pwd -P)")" 1 "$@"
+}
+
+# select from history
+ldh! () {
+  select_history "$(printf '%b' "$(pwd -P)")" 0 "$@"
+}
+
+# select history implementation
+select_history () {
+  local histline
+  local history
+  local item
+
+  while \read -r -d '' histline
+  do
+      history+=( "$histline" )
+  done < <( gawk_history "$@" |
+            gawk 'BEGIN { RS="\0"; FS="\t"; }
+            { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
+            { a[$4] = NR }
+            END { PROCINFO["sorted_in"] = "@val_num_desc";
+                  num = 0;
+                  for (i in a) { printf "%s\0", i; num++; if (num == 10) break } }' )
+
+  select item in "${history[@]}"
+  do
+    echo $item
+    break
+  done
+}
+
 
 # core gawk history implementation
 gawk_history () {
@@ -183,7 +223,7 @@ SEARCH matches against the command.
               (length(end_time) == 0 || $3 <= end_time) &&
               (length(user) == 0 || $1 ~ user_matcher ) &&
               (length(host) == 0 || $1 ~ host_matcher ) &&
-              (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
+              (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s\0", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
     elif [ "$directory" = "/" ]
     then gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
       'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
@@ -192,7 +232,7 @@ SEARCH matches against the command.
             (length(end_time) == 0 || $3 <= end_time) &&
             (length(user) == 0 || $1 ~ user_matcher ) &&
             (length(host) == 0 || $1 ~ host_matcher ) &&
-            (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
+            (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s\0", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
     else gawk -vdirectory="$directory" -vstart_time="$start_time" -vend_time="$end_time" -vsearch="$search" -vhost="$host" -vuser="$user" \
       'BEGIN { RS="\0"; FS="\t"; user_matcher="^"user"(@|$)"; host_matcher="[^@]*@"host;}
        { for(i = 5; i <= NF; i++) $4 = $4 "\t" $i}
@@ -201,6 +241,6 @@ SEARCH matches against the command.
               (length(end_time) == 0 || $3 <= end_time) &&
               (length(user) == 0 || $1 ~ user_matcher ) &&
               (length(host) == 0 || $1 ~ host_matcher ) &&
-              (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
+              (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s\0", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
     fi
 }
