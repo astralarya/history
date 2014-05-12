@@ -34,13 +34,16 @@ export HISTCONTROL=''
 PROMPT_COMMAND="_log_history; ${PROMPT_COMMAND}"
 _PWD="$(pwd -P)"
 __PWD="$_PWD"
-_HISTNUM="$(history 1 | sed 's/ *\([0-9]*\).*/\1/')"
+_HISTNUM=""
 
 # logging function
 function _log_history {
 _PWD="$(pwd -P)"
 local histnum="$(history 1 | sed 's/ *\([0-9]*\).*/\1/')"
-if [ "$histnum" != "$_HISTNUM" ]
+if [ -z "$_HISTNUM" ]
+then
+ _HISTNUM="$histnum"
+elif [ "$histnum" != "$_HISTNUM" ]
 then
  _HISTNUM="$histnum"
  if [ "$__PWD" = "$_PWD" ]
