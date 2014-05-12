@@ -98,6 +98,10 @@ select_history () {
 
   select item in "${history[@]}"
   do
+      if [ -z "$item" ]
+      then break
+      fi
+
       read -e -i "$item" -p '$ ' item
       eval "$item"
       history -s "$item"
