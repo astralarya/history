@@ -98,8 +98,7 @@ select_history () {
 
   select item in "${history[@]}"
   do
-      printf '$ '
-      read -e -i "$item" item
+      read -e -i "$item" -p '$ ' item
       eval "$item"
       history -s "$item"
       break
