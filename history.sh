@@ -30,13 +30,19 @@ ALL_HISTORY_FILE=~/.bash_all_history
 
 #set up history logging of commands
 export HISTTIMEFORMAT='	%F %T	'
+export HISTCONTROL=''
 PROMPT_COMMAND="_log_history; ${PROMPT_COMMAND}"
 _PWD="$(pwd -P)"
 __PWD="$_PWD"
+_HISTNUM="$(history 1 | sed 's/ *\([0-9]*\).*/\1/')"
 
 # logging function
 function _log_history {
 _PWD="$(pwd -P)"
+local histnum="$(history 1 | sed 's/ *\([0-9]*\).*/\1/')"
+if [ "$histnum" != "$_HISTNUM" ]
+then
+ _HISTNUM="$histnum"
  if [ "$__PWD" = "$_PWD" ]
  then
   local directory="$_PWD"
@@ -45,6 +51,7 @@ _PWD="$(pwd -P)"
   __PWD="$_PWD"
  fi
  printf '%q\t%q\t%b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^[^\t]*\t//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
+fi
 }
 
 # gawk history
