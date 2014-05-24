@@ -30,7 +30,7 @@ ALL_HISTORY_FILE=~/.bash_all_history
 
 #set up history logging of commands
 export HISTTIMEFORMAT='	%F %T	'
-export HISTCONTROL=''
+export HISTCONTROL='ignorespace'
 PROMPT_COMMAND="_log_history; ${PROMPT_COMMAND}"
 _PWD="$(pwd -P)"
 __PWD="$_PWD"
