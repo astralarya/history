@@ -35,6 +35,7 @@ PROMPT_COMMAND="_log_history; ${PROMPT_COMMAND}"
 _PWD="$(pwd -P)"
 __PWD="$_PWD"
 _HISTNUM=""
+_LAST_COMMAND=""
 
 # logging function
 function _log_history {
@@ -45,7 +46,6 @@ then
  _HISTNUM="$histnum"
 elif [ "$histnum" != "$_HISTNUM" ]
 then
- _HISTNUM="$histnum"
  if [ "$__PWD" = "$_PWD" ]
  then
   local directory="$_PWD"
@@ -54,6 +54,14 @@ then
   __PWD="$_PWD"
  fi
  printf '%q\t%q\t%b\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^[^\t]*\t//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
+ local command="$(cat <(history 1 | head -1 | sed 's/^[^\t]*\t[^\t]*\t//') <(history 1 | tail -n +2))"
+ if [ "$_LAST_COMMAND" = "$command" ]
+ then
+  history -d "$histnum"
+ else
+  _HISTNUM="$histnum"
+  _LAST_COMMAND="$command"
+ fi
 fi
 }
 
