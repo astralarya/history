@@ -120,7 +120,7 @@ select_history () {
       then break
       fi
 
-      read -e -i "$item" -p '$ ' item
+      read -er -i "$item" -p '$ ' item
       history -s "$item"
       eval "$item"
       break
