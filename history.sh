@@ -160,30 +160,13 @@ gawk_history () {
             fi
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            if [ "$recursive_dir" = 0 ]
-            then printf 'Usage: ldh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
-History of commands run in this directory only
-TIMESPEC is an argument of the form "[START..END]",
-where START and END are strings understood by `date`.
-An "@" is used to specify user or host.
-SEARCH matches against the command. 
-'
-            elif [ "$directory" = "/" ]
-            then printf 'Usage: gh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
+            printf 'Usage: gh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
 Search history of commands.
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
 An "@" is used to specify user or host.
 SEARCH matches against the command. 
 '
-            else printf 'Usage: dh [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
-History of commands run in this directory and subdirectories
-TIMESPEC is an argument of the form "[START..END]",
-where START and END are strings understood by `date`.
-An "@" is used to specify user or host.
-SEARCH matches against the command. 
-'
-            fi
             return 0
         elif [ "$arg" = "--" ]
           then state="input"
