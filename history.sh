@@ -121,15 +121,18 @@ select_history () {
       then break
       fi
 
+      # Read user edited command
       read -er -i "$item" -p '$ ' item
       while bash -n <<<$item 2>&1 | grep 'unexpected end of file' > /dev/null || [ -z "${item%%*\\}" ]
       do
         read -r -p '> ' line
         item="$item"$'\n'"$line"
       done
+
+      # Add command to history and run
       history -s "$item"
       eval "$item"
-      break
+      return $?
   done
 }
 
