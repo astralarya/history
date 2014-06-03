@@ -100,6 +100,7 @@ select_history () {
   local histline
   local history
   local item
+  local line
   local _scs_col="\e[0;32m"
   local _trn_col='\e[0;33m'
 
@@ -121,6 +122,11 @@ select_history () {
       fi
 
       read -er -i "$item" -p '$ ' item
+      while bash -n <<<$item 2>&1 | grep 'unexpected end of file' > /dev/null || [ -z "${item%%*\\}" ]
+      do
+        read -r -p '> ' line
+        item="$item"$'\n'"$line"
+      done
       history -s "$item"
       eval "$item"
       break
