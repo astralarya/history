@@ -74,12 +74,12 @@ Source `history.sh` in your .\*rc file.
 
 ### Dependencies
 
-gawk
-date
-less
-sed
-gnu-coreutils
-bash
+* gawk
+* date
+* less
+* sed
+* gnu-coreutils
+* bash
 
 
 ## License
