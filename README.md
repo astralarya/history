@@ -63,6 +63,9 @@ View all commands by user `baz`
 View all commands run on hostname `host`
 > gh @host
 
+View all commands containing the string `@host`
+> gh -- @host
+
 
 ## Options
 
