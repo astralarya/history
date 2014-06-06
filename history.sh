@@ -23,7 +23,10 @@
 
 ### SETTINGS ###
 
-ALL_HISTORY_FILE=~/.bash_all_history
+if [ -z "$ALL_HISTORY_FILE" ]
+then
+  ALL_HISTORY_FILE=~/.bash_all_history
+fi
 
 ### END SETTINGS ###
 
