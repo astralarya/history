@@ -62,6 +62,7 @@ View all commands by user `baz`
 View all commands run on hostname `host`
 > gh @host
 
+
 ## Options
 
 * `$ALL_HISTORY_FILE` - location of history file; default `~/.bash_all_history`
@@ -70,3 +71,32 @@ View all commands run on hostname `host`
 ## Installation
 
 Source `history.sh` in your .\*rc file.
+
+### Dependencies
+
+gawk
+date
+less
+sed
+gnu-coreutils
+bash
+
+
+## License
+
+history - v1.0
+
+Copyright (C) 2014  Mara Kim, Kris Mcgary
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
