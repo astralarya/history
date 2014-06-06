@@ -1,6 +1,7 @@
 # history
 
 Longterm bash history with advanced search and select.
+
 Manages a comprehensive history file that
 allows searching and rerunning commands according to
 executed command, working directory, time run, user, or host.
