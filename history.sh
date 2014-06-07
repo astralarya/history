@@ -68,23 +68,23 @@ then
 fi
 }
 
-# gawk history
-gh () {
+# history
+h () {
   gawk_history "/" 1 "$@" | tr -d '\000' | less -FX +G
 }
 
-#history of commands run in this directory and subdirectories (with grep)
+# history of commands run in this directory and subdirectories (with grep)
 dh () {
   gawk_history "$(printf '%b' "$(pwd -P)")" 1 "$@" | tr -d '\000' | less -FX +G
 }
 
-#history of commands run in this directory only (with grep)
+# history of commands run in this directory only (with grep)
 ldh () {
   gawk_history "$(printf '%b' "$(pwd -P)")" 0 "$@" | tr -d '\000' | less -FX +G
 }
 
 # select from history
-gh! () {
+h! () {
   select_history "/" 1 "$@"
 }
 
