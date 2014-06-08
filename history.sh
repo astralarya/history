@@ -184,6 +184,7 @@ gawk_history () {
     local timespec
     local user
     local host
+    local argdir
     local directory
     local recursive_dir
 
@@ -214,20 +215,35 @@ gawk_history () {
             if [ "${arg/*]/}" ]
               then state="time"
             fi
-        elif [ -z "${arg/*@*/}" ]
+        elif [ -z "${arg/*@*/}" -o -z "${arg/*:*/}" ]
         then
-            if [ "${arg%%@*}" -a ! "$user" ]
+            if [ -z "${arg/*@*/}" ]
             then
-              user="${arg%%@*}" 
+              if [ "${arg%%@*}" -a ! "$user" ]
+              then
+                user="${arg%%@*}" 
+              fi
+              if [ "${arg#*@}" -a ! "$host" ]
+              then
+                host="${arg#*@}" 
+                host="${host%%:*}" 
+              fi
             fi
-            if [ "${arg#*@}" -a ! "$host" ]
-            then
-              host="${arg#*@}" 
+            if [ -z "${arg/*:*/}" ] && [ "${arg#*:}" -a ! "$argdir" ]
+            then argdir="${arg#*:}" 
             fi
         else
             search+="$arg"
         fi
     done
+
+    if [ "$argdir" ]
+    then
+        if [ -z "${argdir##~*}" ]
+        then directory="$(readlink -m -- "$HOME${argdir#\~}")"
+        else directory="$(readlink -m -- "$argdir")"
+        fi
+    fi
 
     local start_time
     local end_time
