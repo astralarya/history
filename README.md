@@ -9,11 +9,11 @@ executed command, working directory, time run, user, or host.
 
 ## Usage
 
-* **h**[!] [[*USER*]@[*HOST*]][:DIRECTORY] [*TIMESPEC*] [--] [*SEARCH*]
+* **h**[!] [[*USER*]@[*HOST*]][:*DIRECTORY*] [*TIMESPEC*] [--] [*SEARCH*]
   * Search history for pattern
-* **dh**[!] [[*USER*]@[*HOST*]][:DIRECTORY] [*TIMESPEC*] [--] [*SEARCH*]
+* **dh**[!] [[*USER*]@[*HOST*]][:*DIRECTORY*] [*TIMESPEC*] [--] [*SEARCH*]
   * Show history of commands in this directory and subdirectories and optionally filter with pattern
-* **ldh**[!] [[*USER*]@[*HOST*]][:DIRECTORY] [*TIMESPEC*] [--] [*SEARCH*]
+* **ldh**[!] [[*USER*]@[*HOST*]][:*DIRECTORY*] [*TIMESPEC*] [--] [*SEARCH*]
   * Show history of commands in this directory only and optionally filter with pattern
 
 SEARCH is a regular expression understood by `gawk` used to match the executed command.
