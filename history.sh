@@ -154,7 +154,7 @@ gawk_history_interactive () {
             state=""
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
-            printf 'Usage: [[l]d]h[!] [[USER]@[HOST]][:DIRECTORY] [TIMESPEC] [--] [SEARCH]
+            printf 'Usage: [[l]d]h[!] [[USER]@[HOST]][:[:]DIRECTORY] [TIMESPEC] [--] [SEARCH]
 Search command history.
 
 SEARCH is a regular expression understood by `gawk`
@@ -164,8 +164,9 @@ TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
 A single day may be specified by "[DATE]".
 
-An "@" is used to specify user or host.
-A ":" is used to specify directory.
+An "@" is used to specify user or host filters.
+A ":" is used to specify the directory filter.
+"::" excludes subdirectories.
 
 Select from the 10 most recent matching entries
 adding `!` to the command (ex. `h!`).
@@ -230,8 +231,20 @@ gawk_history () {
                 host="${host%%:*}" 
               fi
             fi
-            if [ -z "${arg/*:*/}" ] && [ "${arg#*:}" -a ! "$argdir" ]
-            then argdir="${arg#*:}" 
+            if [ -z "${arg/*::*/}" ]
+            then
+              if [ "${arg#*::}" -a ! "$argdir" ]
+              then
+                argdir="${arg#*::}"
+                recursive_dir=0
+              fi
+            elif [ -z "${arg/*:*/}" ]
+            then
+              if [ "${arg#*:}" -a ! "$argdir" ]
+              then
+                argdir="${arg#*:}"
+                recursive_dir=1
+              fi
             fi
         else
             search+="$arg"

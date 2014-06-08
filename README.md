@@ -9,11 +9,11 @@ executed command, working directory, time run, user, or host.
 
 ## Usage
 
-* **h**[!] [[*USER*]@[*HOST*]][:*DIRECTORY*] [*TIMESPEC*] [--] [*SEARCH*]
+* **h**[!] [[*USER*]@[*HOST*]][:[:]*DIRECTORY*] [*TIMESPEC*] [--] [*SEARCH*]
   * Search history for pattern
-* **dh**[!] [[*USER*]@[*HOST*]][:*DIRECTORY*] [*TIMESPEC*] [--] [*SEARCH*]
+* **dh**[!] [[*USER*]@[*HOST*]][:[:]*DIRECTORY*] [*TIMESPEC*] [--] [*SEARCH*]
   * Show history of commands in this directory and subdirectories and optionally filter with pattern
-* **ldh**[!] [[*USER*]@[*HOST*]][:*DIRECTORY*] [*TIMESPEC*] [--] [*SEARCH*]
+* **ldh**[!] [[*USER*]@[*HOST*]][:[:]*DIRECTORY*] [*TIMESPEC*] [--] [*SEARCH*]
   * Show history of commands in this directory only and optionally filter with pattern
 
 SEARCH is a regular expression understood by `gawk` used to match the executed command.
@@ -22,8 +22,9 @@ TIMESPEC is an argument of the form "[START..END]", (note the square brackets)
 where START and END are strings understood by `date`.
 A single day may be specified by "[DATE]".
 
-An "@" is used to specify user or host.
-A ":" is used to specify directory.
+An "@" is used to specify user or host filters.
+A ":" is used to specify the directory filter.
+"::" excludes subdirectories.
 
 All three commands allow selecting from the 10 most recent entries
 matching the filters by adding `!` to the command (ex. `h!`).
