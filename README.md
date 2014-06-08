@@ -9,7 +9,7 @@ executed command, working directory, time run, user, or host.
 
 ## Usage
 
-* **gh**[!] [[*USER*]@[*HOST*]] [*TIMESPEC*] [--] [*SEARCH*]
+* **h**[!] [[*USER*]@[*HOST*]] [*TIMESPEC*] [--] [*SEARCH*]
   * Search history for pattern
 * **dh**[!] [[*USER*]@[*HOST*]] [*TIMESPEC*] [--] [*SEARCH*]
   * Show history of commands in this directory and subdirectories and optionally filter with pattern
@@ -25,28 +25,16 @@ A single day may be specified by "[DATE]".
 An "@" is used to specify user or host.
 
 All three commands allow selecting from the 10 most recent entries
-matching the filters by adding `!` to the command (ex. `gh!`).
+matching the filters by adding `!` to the command (ex. `h!`).
 The selected command may be edited before it is executed.
 
 ### Examples
 
 View all history
-> gh
+> h
 
 View all commands matching the string `foo`
-> gh foo
-
-View all commands starting with `echo`
-> gh ^echo
-
-View all commands run yesterday containing `bar`
-> gh [yesterday] bar
-
-View all commands run last week
-> gh [14 days ago..7 days ago]
-
-View all commands run this month
-> gh [1 month ago..]
+> h foo
 
 View all commands run in this directory recursively
 > dh
@@ -57,14 +45,26 @@ View all commands run in this directory only
 Select and edit from the most recent commands run in this directory only
 > ldh!
 
+View all commands starting with `echo`
+> h ^echo
+
+View all commands run yesterday containing `bar`
+> h [yesterday] bar
+
+View all commands run last week
+> h [14 days ago..7 days ago]
+
+View all commands run this month
+> h [1 month ago..]
+
 View all commands by user `baz`
-> gh baz@
+> h baz@
 
 View all commands run on hostname `host`
-> gh @host
+> h @host
 
 View all commands containing the string `@host`
-> gh -- @host
+> h -- @host
 
 
 ## Options
