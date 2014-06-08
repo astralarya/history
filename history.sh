@@ -70,17 +70,17 @@ fi
 
 # history
 h () {
-  gawk_history "/" 1 "$@" | tr -d '\000' | less -FX +G
+  gawk_history_interactive "/" 1 "$@"
 }
 
 # history of commands run in this directory and subdirectories (with grep)
 dh () {
-  gawk_history "$(printf '%b' "$(pwd -P)")" 1 "$@" | tr -d '\000' | less -FX +G
+  gawk_history_interactive "$(printf '%b' "$(pwd -P)")" 1 "$@"
 }
 
 # history of commands run in this directory only (with grep)
 ldh () {
-  gawk_history "$(printf '%b' "$(pwd -P)")" 0 "$@" | tr -d '\000' | less -FX +G
+  gawk_history_interactive "$(printf '%b' "$(pwd -P)")" 0 "$@"
 }
 
 # select from history
@@ -139,6 +139,42 @@ select_history () {
   done
 }
 
+# interative gawk history implementation
+gawk_history_interactive () {
+    # read arguments
+    local state="first"
+
+    for arg in "$@"
+    do
+        if [ "$state" = "first" ]
+        then
+            state="second"
+        elif [ "$state" = "second" ]
+        then
+            state=""
+        elif [ "$arg" = "-h" -o "$arg" = "--help" ]
+        then
+            printf 'Usage: [[l]d]h[!] [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
+Search command history.
+
+SEARCH is a regular expression understood by `gawk`
+used to match the executed command.
+
+TIMESPEC is an argument of the form "[START..END]",
+where START and END are strings understood by `date`.
+A single day may be specified by "[DATE]".
+
+An "@" is used to specify user or host.
+
+Select from the 10 most recent matching entries
+adding `!` to the command (ex. `h!`).
+The selected command may be edited before execution.
+'
+            return 0
+        fi
+    done
+    gawk_history "$@" | tr -d '\000' | less -FX +G
+}
 
 # core gawk history implementation
 gawk_history () {
@@ -170,25 +206,6 @@ gawk_history () {
             if [ -z "${arg/*]/}" ]
               then state=""
             fi
-        elif [ "$arg" = "-h" -o "$arg" = "--help" ]
-        then
-            printf 'Usage: [[l]d]h[!] [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
-Search command history.
-
-SEARCH is a regular expression understood by `gawk`
-used to match the executed command.
-
-TIMESPEC is an argument of the form "[START..END]",
-where START and END are strings understood by `date`.
-A single day may be specified by "[DATE]".
-
-An "@" is used to specify user or host.
-
-Select from the 10 most recent matching entries
-adding `!` to the command (ex. `h!`).
-The selected command may be edited before execution.
-'
-            return 0
         elif [ "$arg" = "--" ]
           then state="input"
         elif [ -z "${arg/\[*/}" -a ! "$timespec" ]
