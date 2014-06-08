@@ -84,6 +84,7 @@ Source `history.sh` in your .\*rc file.
 * date
 * less
 * sed
+* readlink
 * gnu-coreutils
 * bash
 
