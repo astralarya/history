@@ -173,17 +173,20 @@ gawk_history () {
         elif [ "$arg" = "-h" -o "$arg" = "--help" ]
         then
             printf 'Usage: [[l]d]h[!] [TIMESPEC] [[USER]@[HOST]] [--] [SEARCH]
-Search history of commands.
+Search command history.
+
 SEARCH is a regular expression understood by `gawk`
 used to match the executed command.
+
 TIMESPEC is an argument of the form "[START..END]",
 where START and END are strings understood by `date`.
 A single day may be specified by "[DATE]".
+
 An "@" is used to specify user or host.
 
-You can select from the 10 most recent matching entries
+Select from the 10 most recent matching entries
 adding `!` to the command (ex. `h!`).
-The selected command may be edited before it is executed.
+The selected command may be edited before execution.
 '
             return 0
         elif [ "$arg" = "--" ]
