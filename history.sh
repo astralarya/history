@@ -98,6 +98,15 @@ ldh! () {
   select_history "$(printf '%b' "$(pwd -P)")" 0 "$@"
 }
 
+# bash completions
+
+complete -cf h
+complete -cf dh
+complete -cf ldh
+complete -cf h!
+complete -cf dh!
+complete -cf ldh!
+
 # select history implementation
 select_history () {
   local histline
