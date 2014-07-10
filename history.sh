@@ -35,26 +35,34 @@ fi
 export HISTTIMEFORMAT='	%F %T	'
 export HISTCONTROL='ignorespace'
 PROMPT_COMMAND="_log_history; ${PROMPT_COMMAND}"
-_PWD="$(pwd -P)"
-__PWD="$_PWD"
+declare -a _PWD="$(pwd -P)"
 _HISTNUM=""
 _LAST_COMMAND=""
 
 # logging function
 function _log_history {
-_PWD="$(pwd -P)"
+local directory="$(pwd -P)"
 local histnum="$(history 1 | sed 's/ *\([0-9]*\).*/\1/')"
 if [ -z "$_HISTNUM" ]
 then
  _HISTNUM="$histnum"
 elif [ "$histnum" != "$_HISTNUM" ]
 then
- if [ "$__PWD" = "$_PWD" ]
+ if [ "$directory" != "$_PWD" ]
  then
-  local directory="$_PWD"
- else
-  local directory="$__PWD"
-  __PWD="$_PWD"
+  local match
+  local i
+  for i in {1..8}
+  do if [ "$directory" = "${_PWD[$i]}" ]
+     then unset _PWD[$i]
+          match="true"
+     fi
+  done
+  if [ -z "$match" ]
+  then unset _PWD[9]
+  fi
+  _PWD=( "$directory" "${_PWD[@]}" )
+  local directory="${_PWD[1]}"
  fi
  printf '%q\t%q\t%s\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^[^\t]*\t//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
  local command="$(cat <(history 1 | head -1 | sed 's/^[^\t]*\t[^\t]*\t//') <(history 1 | tail -n +2))"
@@ -96,6 +104,29 @@ dh! () {
 # select from history
 ldh! () {
   select_history "$(printf '%b' "$(pwd -P)")" 0 "$@"
+}
+
+# select from working directory history
+cd! () {
+  select item in "${_PWD[@]}"
+  do
+      if [ -z "$item" ]
+      then break
+      fi
+
+      # Read user edited command
+      read -er -i "$item" -p '$ ' item
+      while bash -n <<<$item 2>&1 | grep 'unexpected end of file' > /dev/null || [ -z "${item%%*\\}" ]
+      do
+        read -r -p '> ' line
+        item="$item"$'\n'"$line"
+      done
+
+      # Add command to history and run
+      history -s "cd $item"
+      cd "$item"
+      return $?
+  done
 }
 
 # bash completions
