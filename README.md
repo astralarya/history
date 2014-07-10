@@ -32,6 +32,11 @@ All three commands allow selecting from the 10 most recent entries
 matching the filters by adding `!` to the command (ex. `h!`).
 The selected command may be edited before it is executed.
 
+The following command is also provided:
+
+* **cd!**
+  * Select from recent working directories
+
 ### Examples
 
 View all history
@@ -69,6 +74,9 @@ View all commands run on hostname `host`
 
 View all commands containing the string `@host`
 > h -- @host
+
+Select from the most recent working directory locations
+> cd!
 
 
 ## Options
