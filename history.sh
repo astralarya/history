@@ -35,9 +35,9 @@ fi
 export HISTTIMEFORMAT='	%F %T	'
 export HISTCONTROL='ignorespace'
 PROMPT_COMMAND="_log_history; ${PROMPT_COMMAND}"
-declare -a _PWD="$(pwd -P)"
 _HISTNUM=""
 _LAST_COMMAND=""
+declare -a _PWD
 
 # logging function
 function _log_history {
@@ -108,7 +108,19 @@ ldh! () {
 
 # select from working directory history
 cd! () {
-  select item in "${_PWD[@]}"
+  local histline
+  local history
+  local item
+  local line
+
+  if [ -z "$*" ]
+  then history=( "${_PWD[@]}" )
+  else while read -r -d '' histline
+    do history+=( "$histline" )
+    done < <( gawk_directory_history "/" 1 "$@" )
+  fi
+
+  select item in "${history[@]}"
   do
       if [ -z "$item" ]
       then break
@@ -144,8 +156,6 @@ select_history () {
   local history
   local item
   local line
-  local _scs_col="\e[0;32m"
-  local _trn_col='\e[0;33m'
 
   while \read -r -d '' histline
   do
@@ -177,6 +187,16 @@ select_history () {
       eval "$item"
       return $?
   done
+}
+
+# directory history implementation
+gawk_directory_history () {
+  gawk_history "$@" |
+    gawk 'BEGIN { RS="\0"; FS="\t"; }
+          { a[$2] = NR }
+          END { PROCINFO["sorted_in"] = "@val_num_desc";
+                num = 0;
+                for (i in a) { printf "%s\0", i; num++; if (num == 10) break } }'
 }
 
 # interative gawk history implementation
@@ -269,8 +289,8 @@ gawk_history () {
               fi
               if [ "${arg#*@}" -a ! "$host" ]
               then
-                host="${arg#*@}" 
-                host="${host%%:*}" 
+                host="${arg#*@}"
+                host="${host%%:*}"
               fi
             fi
             if [ -z "${arg/*::*/}" ]
@@ -363,3 +383,34 @@ gawk_history () {
               (length(search) == 0 || $4 ~ search )) printf "%s\t%s\t%s\t%s\0", $1,$2,$3,$4}' "$ALL_HISTORY_FILE"
     fi
 }
+
+_init_log_history () {
+  local histline
+  while read -r -d '' histline
+  do _PWD+=( "$histline" )
+  done < <( gawk 'BEGIN { RS="\0"; FS="\t"; }
+                  { a[$2] = NR }
+                  END { PROCINFO["sorted_in"] = "@val_num_desc";
+                        num = 0;
+                        for (i in a) { printf "%s\0", i; num++; if (num == 10) break } }' \
+                  "$ALL_HISTORY_FILE" )
+
+  local directory="$(pwd -P)"
+  if [ "$directory" != "$_PWD" ]
+  then
+    local match
+    local i
+    for i in {1..8}
+    do if [ "$directory" = "${_PWD[$i]}" ]
+       then unset _PWD[$i]
+            match="true"
+       fi
+    done
+    if [ -z "$match" ]
+    then unset _PWD[9]
+    fi
+    _PWD=( "$directory" "${_PWD[@]}" )
+    local directory="${_PWD[1]}"
+  fi
+}
+_init_log_history
