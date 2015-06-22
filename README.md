@@ -9,25 +9,32 @@ executed command, working directory, time run, user, or host.
 
 ## Usage
 
-* **h**[!] [*CONTEXT*] [*TIMESPEC*] [--] [*SEARCH*]
+* **h**[!] [*CONTEXT*] [*TIMESPEC*] [--] [*SEARCH*]...
   * Search history for pattern
-* **dh**[!] [*CONTEXT*] [*TIMESPEC*] [--] [*SEARCH*]
+* **dh**[!] [*CONTEXT*] [*TIMESPEC*] [--] [*SEARCH*]...
   * Show history of commands in this directory and subdirectories and optionally filter with pattern
-* **ldh**[!] [*CONTEXT*] [*TIMESPEC*] [--] [*SEARCH*]
+* **ldh**[!] [*CONTEXT*] [*TIMESPEC*] [--] [*SEARCH*]...
   * Show history of commands in this directory only and optionally filter with pattern
 
-SEARCH is a regular expression understood by `gawk` used to match the executed command.
+### SEARCH
+SEARCH matches the executed command.
+It is interpreted as a `gawk` regular expression.
+Multiple SEARCH arguments are joined with `.*`.
 
-TIMESPEC is an argument of the form "[START..END]", (note the square brackets)
-where START and END are strings understood by `date`.
+### TIMESPEC
+TIMESPEC matches the timestamp and
+is an argument of the form "[START..END]", (note the square brackets).
+START and END are strings understood by `date`.
 A single day may be specified by "[DATE]".
 
+### CONTEXT
 CONTEXT is an argument of the form "*USER*@*HOST*:*DIRECTORY*"
 or "*USER*@*HOST*::*DIRECTORY*", where each field is optional.
 "@" is used to specify user or host filters.
 A ":" is used to specify a directory filter,
 while "::" may be used instead to exclude subdirectories.
 
+### !
 All three commands allow selecting from the 10 most recent entries
 matching the filters by adding `!` to the command (ex. `h!`).
 The selected command may be edited before it is executed.
