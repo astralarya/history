@@ -31,8 +31,8 @@ A single day may be specified by "[DATE]".
 CONTEXT is an argument of the form "*USER*@*HOST*:*DIRECTORY*"
 or "*USER*@*HOST*::*DIRECTORY*", where each field is optional.
 "@" is used to specify user or host filters.
-A ":" is used to specify a directory filter,
-while "::" may be used instead to exclude subdirectories.
+":" is used to specify a directory filter.
+"::" may be used instead to exclude subdirectories.
 
 ### !
 All three commands allow selecting from the 10 most recent entries
