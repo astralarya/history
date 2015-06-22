@@ -82,8 +82,23 @@ View all commands run on hostname `host`
 View all commands containing the string `@host`
 > h -- @host
 
+View all commands run `/etc` recursively
+> h :/etc
+
+View all commands run in `/etc` only
+> h ::/etc
+
+View all commands run in the parent directory recursively
+> h :..
+
 Select from the most recent working directory locations
 > cd!
+
+Select from the most recent working directory locations running `vim`
+> cd! vim
+
+Select from the most recent working directory locations in `/etc`
+> cd! :/etc
 
 
 ## Options
