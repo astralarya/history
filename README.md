@@ -95,7 +95,7 @@ Select from the most recent working directory locations
 > cd!
 
 Select from the most recent working directory locations running `vim`
-> cd! vim
+> cd! ^vim
 
 Select from the most recent working directory locations in `/etc`
 > cd! :/etc
