@@ -44,7 +44,7 @@ The following command is also provided:
 * **cd!** [*CONTEXT*] [*TIMESPEC*] [--] [*SEARCH*]
   * Select from recent working directories and optionally filter with pattern
 
-### Examples
+## Examples
 
 View all history
 > h
