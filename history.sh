@@ -264,7 +264,7 @@ gawk_history () {
             state=""
         elif [ "$state" = "input" ]
         then
-            search+="$arg"
+            search+="${arg}.*"
         elif [ "$state" = "time" ]
         then
             timespec="$timespec $arg"
@@ -309,7 +309,7 @@ gawk_history () {
               fi
             fi
         else
-            search+="$arg"
+            search+="${arg}.*"
         fi
     done
 
