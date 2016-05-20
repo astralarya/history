@@ -64,8 +64,8 @@ then
   _PWD=( "$directory" "${_PWD[@]}" )
   local directory="${_PWD[1]}"
  fi
- printf '%q\t%q\t%s\n\x00' "$USER@$HOSTNAME" "$directory" "$(cat <(history 1 | head -1 | sed 's/^[^\t]*\t//') <(history 1 | tail -n +2))" >> "$ALL_HISTORY_FILE"
- local command="$(cat <(history 1 | head -1 | sed 's/^[^\t]*\t[^\t]*\t//') <(history 1 | tail -n +2))"
+ local command="$(cat <(history 1 | head -1 | sed 's/[^	]*	//') <(history 1 | tail -n +2))"
+ printf '%q\t%q\t%s\n\x00' "$USER@$HOSTNAME" "$directory" "$command" >> "$ALL_HISTORY_FILE"
  if [ "$_LAST_COMMAND" = "$command" ]
  then
   history -d "$histnum"
