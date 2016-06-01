@@ -65,7 +65,7 @@ then
   local directory="${_PWD[1]}"
  fi
  local command="$(cat <(history 1 | head -1 | sed 's/[^	]*	//') <(history 1 | tail -n +2))"
- printf '%q\t%q\t%s\n\x00' "$USER@$HOSTNAME" "$directory" "$command" >> "$ALL_HISTORY_FILE"
+ printf '%q\t%q\t%s\n' "$USER@$HOSTNAME" "$directory" "$command" >> "$ALL_HISTORY_FILE"
  if [ "$_LAST_COMMAND" = "$command" ]
  then
   history -d "$histnum"
