@@ -30,6 +30,18 @@ fi
 
 ### END SETTINGS ###
 
+# Check dependencies
+if ! command -v gawk &> /dev/null; then
+	printf '%s requires gawk\n' $BASH_SOURCE
+fi
+if date --date today &> /dev/null; then
+  __BASH_HISTORY_GDATE=date
+elif gdate --date today &> /dev/null; then
+  __BASH_HISTORY_GDATE=gdate
+else
+  printf '%s requires GNU date\n' $BASH_SOURCE
+fi
+
 
 #set up history logging of commands
 export HISTTIMEFORMAT='	%F %T	'
@@ -326,7 +338,7 @@ gawk_history () {
     if [ "${timespec/*..*/}" ]
     then
       timespec="${timespec#[}"
-      timespec="$(date -d "${timespec%]}" '+%F')"
+      timespec="$($__BASH_HISTORY_GDATE -d "${timespec%]}" '+%F')"
       start_time="$timespec"
       end_time="$timespec + 1day"
     else
@@ -338,7 +350,7 @@ gawk_history () {
 
     if [ "$start_time" ]
     then
-      start_time="$(date -d "$start_time" '+%F %T')"
+      start_time="$($__BASH_HISTORY_GDATE -d "$start_time" '+%F %T')"
       if [ -z "$start_time" ]
       then
         return 1
@@ -346,7 +358,7 @@ gawk_history () {
     fi
     if [ "$end_time" ]
     then
-      end_time="$(date -d "$end_time" '+%F %T')"
+      end_time="$($__BASH_HISTORY_GDATE -d "$end_time" '+%F %T')"
       if [ -z "$end_time" ]
       then
         return 1
