@@ -46,7 +46,11 @@ fi
 #set up history logging of commands
 export HISTTIMEFORMAT='	%F %T	'
 export HISTCONTROL='ignorespace'
-PROMPT_COMMAND="_log_history;${PROMPT_COMMAND}"
+if [ -v PROMPT_COMMAND ]; then
+  PROMPT_COMMAND="${PROMPT_COMMAND}; _log_history"
+else
+  PROMPT_COMMAND="_log_history"
+fi
 _HISTNUM=""
 _LAST_COMMAND=""
 declare -a _PWD
